@@ -1,17 +1,19 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <span class="d-flex flex-row" style="justify-content: space-between">
+      <h2 style="padding: 8px 0px 0px 8px;">
+        <strong style="color: black">Speed Miner</strong>
+      </h2>
+      <img src="./assets/mine.png" style="max-height: 50px; padding-right: 8px;" />
+    </span>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
-
 export default {
   name: 'App',
   components: {
-    HelloWorld
+    
   }
 }
 </script>
@@ -23,6 +25,5 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
 }
 </style>
