@@ -4,11 +4,11 @@
       <h2 style="padding: 8px 0px 0px 8px;">
         <strong style="color: black">Speed Miner</strong>
       </h2>
-      <img src="./assets/mine.png" style="max-height: 50px; padding-right: 8px;" />
+      <img src="./assets/mine.png" style="max-height: 50px; padding: 8px 0px 0px 8px;" />
     </span>
-    <!-- <div id="nav">
-      <router-link to="/">Game</router-link>
-    </div> -->
+    <div id="nav">
+      <router-link to="/Level1">1</router-link>
+    </div>
     <router-view />
   </div>
 

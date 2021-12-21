@@ -1,6 +1,6 @@
 <template>
     <div>
-        Hello, man
+        Clear all the empty spaces without landing on a mine
     </div>
 </template>
 

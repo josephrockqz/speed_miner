@@ -1,14 +1,20 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Game from './views/Game.vue'
+import LevelSelection from './views/LevelSelection'
+import Level1 from './views/Level1.vue'
 
 Vue.use(VueRouter)
 
 const routes = [
   {
     path: '/',
-    name: 'Game',
-    component: Game
+    name: 'LevelSelection',
+    component: LevelSelection
+  },
+  {
+    path: '/Level1',
+    name: 'Level1',
+    component: Level1
   }
 ]
 
