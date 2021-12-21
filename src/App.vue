@@ -6,7 +6,12 @@
       </h2>
       <img src="./assets/mine.png" style="max-height: 50px; padding-right: 8px;" />
     </span>
+    <!-- <div id="nav">
+      <router-link to="/">Game</router-link>
+    </div> -->
+    <router-view />
   </div>
+
 </template>
 
 <script>
