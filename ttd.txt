@@ -1,0 +1,7 @@
+- Make mine image appear
+- Make numbers appear
+- Make methods global (vuex)
+- Make user confirm changing levels when in the middle of a level
+    + if I end up making the game have multiple levels
+    + Maybe make levels a progression, unlock levels
+- Keep timers for levels
