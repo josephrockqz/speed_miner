@@ -55,6 +55,7 @@ export default {
 }
 .mine {
   background-color: yellowgreen;
-  background-image: url("./assets/mine.png");
+  /* background-image: url("./assets/mine.png"); */
+  /* height: 40px; */
 }
 </style>
