@@ -97,6 +97,10 @@ export default {
         this.getSquares()
         this.getSquaresBool = true
       }
+      // don't place flag if cell is uncovered
+      if (this.squares[cell_index].classList.contains('uncovered')) {
+        return
+      }
       // place flag if one isn't in cell
       if (!this.squares[cell_index].classList.contains('flag')) {
         this.squares[cell_index].classList.add('flag')
