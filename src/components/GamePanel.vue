@@ -1,18 +1,28 @@
 <template>
-    <div style="height: 30px;">
-        
+    <div class="d-flex flex-row game-panel">
+      <h2>numMines</h2>
+      <b-button>:)</b-button>
+      <h2>timeLapsed</h2>
     </div>
 </template>
 
 <script>
 export default {
+
   data() {
     return {}
   },
-  methods: {}
 }
 </script>
 
 <style scoped>
-
+.game-panel {
+  height: 60px;
+  width: 400px;
+  background-color: pink;
+  justify-content: space-between;
+  margin: auto;
+  margin-bottom: 10px;
+  border: black 3px solid;
+}
 </style>

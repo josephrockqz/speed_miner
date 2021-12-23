@@ -1,15 +1,22 @@
 <template>
+
   <div id="levelbox">
+    
     <!--Game Panel-->
     <GamePanel/>
-    <!--Game Grid-->
+
     <div class="main-grid">
+
+      <!--Game Grid-->
       <div v-for="cell in cells"
            :key="cell"
            @click="checkCell(cell)"
            @click.right.prevent="placeFlag(cell)"></div>
+
     </div>
+
   </div>
+
 </template>
 
 <script>
@@ -25,7 +32,8 @@ export default {
       cells: [],
       getSquaresBool: false,
       mineIndices: [],
-      squares: []
+      squares: [],
+      width: 420
     }
   },
   methods: {
