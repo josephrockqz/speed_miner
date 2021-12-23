@@ -1,109 +1,8 @@
 <template>
   <div id="levelbox">
     <!--Game Grid-->
-    <div
-      class="main-grid"
-    >
-      <div @click="checkCell(0)"></div>
-      <div @click="checkCell(1)"></div>
-      <div @click="checkCell(2)"></div>
-      <div @click="checkCell(3)"></div>
-      <div @click="checkCell(4)"></div>
-      <div @click="checkCell(5)"></div>
-      <div @click="checkCell(6)"></div>
-      <div @click="checkCell(7)"></div>
-      <div @click="checkCell(8)"></div>
-      <div @click="checkCell(9)"></div>
-      <div @click="checkCell(10)"></div>
-      <div @click="checkCell(11)"></div>
-      <div @click="checkCell(12)"></div>
-      <div @click="checkCell(13)"></div>
-      <div @click="checkCell(14)"></div>
-      <div @click="checkCell(15)"></div>
-      <div @click="checkCell(16)"></div>
-      <div @click="checkCell(17)"></div>
-      <div @click="checkCell(18)"></div>
-      <div @click="checkCell(19)"></div>
-      <div @click="checkCell(20)"></div>
-      <div @click="checkCell(21)"></div>
-      <div @click="checkCell(22)"></div>
-      <div @click="checkCell(23)"></div>
-      <div @click="checkCell(24)"></div>
-      <div @click="checkCell(25)"></div>
-      <div @click="checkCell(26)"></div>
-      <div @click="checkCell(27)"></div>
-      <div @click="checkCell(28)"></div>
-      <div @click="checkCell(29)"></div>
-      <div @click="checkCell(30)"></div>
-      <div @click="checkCell(31)"></div>
-      <div @click="checkCell(32)"></div>
-      <div @click="checkCell(33)"></div>
-      <div @click="checkCell(34)"></div>
-      <div @click="checkCell(35)"></div>
-      <div @click="checkCell(36)"></div>
-      <div @click="checkCell(37)"></div>
-      <div @click="checkCell(38)"></div>
-      <div @click="checkCell(39)"></div>
-      <div @click="checkCell(40)"></div>
-      <div @click="checkCell(41)"></div>
-      <div @click="checkCell(42)"></div>
-      <div @click="checkCell(43)"></div>
-      <div @click="checkCell(44)"></div>
-      <div @click="checkCell(45)"></div>
-      <div @click="checkCell(46)"></div>
-      <div @click="checkCell(47)"></div>
-      <div @click="checkCell(48)"></div>
-      <div @click="checkCell(49)"></div>
-      <div @click="checkCell(50)"></div>
-      <div @click="checkCell(51)"></div>
-      <div @click="checkCell(52)"></div>
-      <div @click="checkCell(53)"></div>
-      <div @click="checkCell(54)"></div>
-      <div @click="checkCell(55)"></div>
-      <div @click="checkCell(56)"></div>
-      <div @click="checkCell(57)"></div>
-      <div @click="checkCell(58)"></div>
-      <div @click="checkCell(59)"></div>
-      <div @click="checkCell(60)"></div>
-      <div @click="checkCell(61)"></div>
-      <div @click="checkCell(62)"></div>
-      <div @click="checkCell(63)"></div>
-      <div @click="checkCell(64)"></div>
-      <div @click="checkCell(65)"></div>
-      <div @click="checkCell(66)"></div>
-      <div @click="checkCell(67)"></div>
-      <div @click="checkCell(68)"></div>
-      <div @click="checkCell(69)"></div>
-      <div @click="checkCell(70)"></div>
-      <div @click="checkCell(71)"></div>
-      <div @click="checkCell(72)"></div>
-      <div @click="checkCell(73)"></div>
-      <div @click="checkCell(74)"></div>
-      <div @click="checkCell(75)"></div>
-      <div @click="checkCell(76)"></div>
-      <div @click="checkCell(77)"></div>
-      <div @click="checkCell(78)"></div>
-      <div @click="checkCell(79)"></div>
-      <div @click="checkCell(80)"></div>
-      <div @click="checkCell(81)"></div>
-      <div @click="checkCell(82)"></div>
-      <div @click="checkCell(83)"></div>
-      <div @click="checkCell(84)"></div>
-      <div @click="checkCell(85)"></div>
-      <div @click="checkCell(86)"></div>
-      <div @click="checkCell(87)"></div>
-      <div @click="checkCell(88)"></div>
-      <div @click="checkCell(89)"></div>
-      <div @click="checkCell(90)"></div>
-      <div @click="checkCell(91)"></div>
-      <div @click="checkCell(92)"></div>
-      <div @click="checkCell(93)"></div>
-      <div @click="checkCell(94)"></div>
-      <div @click="checkCell(95)"></div>
-      <div @click="checkCell(96)"></div>
-      <div @click="checkCell(97)"></div>
-      <div @click="checkCell(98)"></div>
-      <div @click="checkCell(99)"></div>
+    <div class="main-grid">
+      <div v-for="cell in cells" :key="cell" @click="checkCell(cell)" @click.right.prevent="placeFlag(cell)"></div>
     </div>
   </div>
 </template>
@@ -114,24 +13,71 @@ document.body.style.backgroundColor = '#e9e9e9'
 export default {
   data() {
     return {
+      cells: [],
+      getSquaresBool: false,
       mineIndices: [],
       squares: []
     }
   },
   methods: {
     checkCell(cell_index) {
-      if (!this.mineIndices.includes(cell_index)) {
+      // get square divs if haven't already
+      if (this.getSquaresBool == false) {
+        this.getSquares()
+        this.getSquaresBool = true
+      }
+      // empty cell is clicked
+      if (!this.mineIndices.includes(cell_index) && !this.squares[cell_index].classList.contains('flag')) {
         this.squares[cell_index].classList.add('uncovered')
-      } else {
+        let num_neighbor_mines = this.getNeighborMines(cell_index)
+        this.squares[cell_index].innerText = num_neighbor_mines
+      } 
+      // mine is clicked
+      else if (this.mineIndices.includes(cell_index) && !this.squares[cell_index].classList.contains('flag')) {
         let image_element = new Image(40,40)
         image_element.src = "/src/assets/mine.png"
         image_element.setAttribute("height", "40");
         image_element.setAttribute("width", "40");
-        console.log(image_element)
         // this.squares[this.mineIndices[i]].appendChild(image_element)
         this.squares[cell_index].classList.add('mine')
         this.gameOver()
       }
+    },
+    getNeighborMines(cell_index) {
+      let mine_counter = 0
+      // upper cell
+      if (cell_index - 10 >= 0 && this.mineIndices.includes(cell_index - 10)) {
+        mine_counter++
+      }
+      // lower cell
+      if (cell_index + 10 <= 99 && this.mineIndices.includes(cell_index + 10)) {
+        mine_counter++
+      }
+      // left cell
+      if (cell_index % 10 != 0 && this.mineIndices.includes(cell_index - 1)) {
+        mine_counter++
+      }
+      // right cell
+      if (cell_index % 10 != 9 && this.mineIndices.includes(cell_index + 1)) {
+        mine_counter++
+      }
+      // upper left cell
+      if (cell_index % 10 != 0 && cell_index - 10 >= 0 && this.mineIndices.includes(cell_index - 11)) {
+        mine_counter++
+      }
+      // upper right cell
+      if (cell_index % 10 != 9 && cell_index - 10 >= 0 && this.mineIndices.includes(cell_index - 9)) {
+        mine_counter++
+      }
+      // lower left cell
+      if (cell_index % 10 != 0 && cell_index + 10 <= 99 && this.mineIndices.includes(cell_index + 9)) {
+        mine_counter++
+      }
+      // lower right cell
+      if (cell_index % 10 != 9 && cell_index + 10 <= 99 && this.mineIndices.includes(cell_index + 11)) {
+        mine_counter++
+      }
+      return mine_counter
     },
     gameOver() {
       let level_box = document.getElementById('levelbox')
@@ -141,6 +87,24 @@ export default {
     },
     getSquares() {
       this.squares = Array.from(document.querySelectorAll('.main-grid div'))
+    },
+    makeCells(num_cells) {
+      this.cells = Array.from(Array(num_cells).keys())
+    },
+    placeFlag(cell_index) {
+      // get square divs if haven't already
+      if (this.getSquaresBool == false) {
+        this.getSquares()
+        this.getSquaresBool = true
+      }
+      // place flag if one isn't in cell
+      if (!this.squares[cell_index].classList.contains('flag')) {
+        this.squares[cell_index].classList.add('flag')
+      }
+      // remove flag if one is already there
+      else {
+        this.squares[cell_index].classList.remove('flag')
+      }
     },
     placeMines(num_cells, num_mines) {
       // function to get random integer in range of
@@ -161,6 +125,8 @@ export default {
     }
   },
   mounted() {
+    console.log("hello")
+    this.makeCells(100)
     this.getSquares()
     this.placeMines(100, 10)
   }

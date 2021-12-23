@@ -59,4 +59,7 @@ export default {
   /* background-image: url("./assets/mine.png"); */
   /* height: 40px; */
 }
+.flag {
+  background-color: orangered;
+}
 </style>
