@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import LevelSelection from './views/LevelSelection'
+import Home from './views/Home'
 import Level1 from './views/Level1.vue'
 import Level2 from './views/Level2.vue'
 
@@ -9,8 +9,8 @@ Vue.use(VueRouter)
 const routes = [
   {
     path: '/',
-    name: 'LevelSelection',
-    component: LevelSelection
+    name: 'Home',
+    component: Home
   },
   {
     path: '/level1',

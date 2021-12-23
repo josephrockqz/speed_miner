@@ -6,20 +6,19 @@
       </h2>
       <img src="./assets/mine.png" style="max-height: 50px; padding: 8px 0px 0px 8px;" />
     </span>
-    <div id="nav">
-      <router-link to="/level1">1</router-link>&nbsp;
-      <router-link to="/level2">2</router-link>
-    </div>
+    <LevelMenu/>
     <router-view />
   </div>
 
 </template>
 
 <script>
+import LevelMenu from './components/LevelMenu.vue'
+
 export default {
   name: 'App',
   components: {
-    
+    LevelMenu
   }
 }
 </script>

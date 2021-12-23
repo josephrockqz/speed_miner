@@ -1,16 +1,25 @@
 <template>
   <div id="levelbox">
+    <!--Game Panel-->
+    <GamePanel/>
     <!--Game Grid-->
     <div class="main-grid">
-      <div v-for="cell in cells" :key="cell" @click="checkCell(cell)" @click.right.prevent="placeFlag(cell)"></div>
+      <div v-for="cell in cells"
+           :key="cell"
+           @click="checkCell(cell)"
+           @click.right.prevent="placeFlag(cell)"></div>
     </div>
   </div>
 </template>
 
 <script>
 document.body.style.backgroundColor = '#e9e9e9'
+import GamePanel from '../components/GamePanel.vue'
 
 export default {
+  components: {
+    GamePanel
+  },
   data() {
     return {
       cells: [],
