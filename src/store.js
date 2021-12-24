@@ -7,10 +7,20 @@ export default new Vuex.Store({
   state: {
     cells: [],
     mineIndices: [],
+    numberOfNeighborMines: 0,
     squares: [],
     squaresBool: false
   },
   mutations: {
+    CELL_MINE(state, cell_index) {
+      state.squares[cell_index].classList.add('mine')
+    },
+    CELL_NUMBER(state, cell_index) {
+      state.squares[cell_index].innerText = state.numberOfNeighborMines
+    },
+    CELL_UNCOVER(state, cell_index) {
+      state.squares[cell_index].classList.add('uncovered')
+    },
     FLAG_ADD(state, cell_index) {
       state.squares[cell_index].classList.add('flag')
     },
@@ -21,14 +31,89 @@ export default new Vuex.Store({
       state.squares = squares
       state.squaresBool = true
     },
+    INCREMENT_NEIGHBOR_MINES(state) {
+      state.numberOfNeighborMines++
+    },
     MAKE_CELLS(state, cells) {
       state.cells = cells
     },
     PLACE_MINE(state, mineIndex) {
       state.mineIndices.push(mineIndex)
+    },
+    RESET_NEIGHBOR_MINES(state) {
+      state.numberOfNeighborMines = 0
     }
   },
   actions: {
+    async checkCell({ commit, dispatch, state }, { cell_index, level }) {
+      // get square divs if haven't already
+      if (state.squaresBool == false) {
+        await dispatch('getSquares', {
+          level: level
+        })
+      }
+      // empty cell is clicked
+      if (!state.mineIndices.includes(cell_index) && !state.squares[cell_index].classList.contains('flag')) {
+        commit('CELL_UNCOVER', cell_index)
+        await dispatch('getNeighborMinesRectangle', {
+          cell_index: cell_index,
+          height: 10,
+          width: 10
+        })
+        commit('CELL_NUMBER', cell_index)
+        await dispatch('resetNeighborMines')
+      } 
+      // mine is clicked
+      else if (state.mineIndices.includes(cell_index) && !state.squares[cell_index].classList.contains('flag')) {
+        let image_element = new Image(40,40)
+        image_element.src = "/src/assets/mine.png"
+        image_element.setAttribute("height", "40");
+        image_element.setAttribute("width", "40");
+        // this.squares[this.mineIndices[i]].appendChild(image_element)
+        commit('CELL_MINE', cell_index)
+        await dispatch('gameOver')
+      }
+    },
+    gameOver() {
+      let level_box = document.getElementById('levelbox')
+      let game_over = document.createElement('h1')
+      game_over.innerText = "GAME OVER"
+      level_box.appendChild(game_over)
+    },
+    getNeighborMinesRectangle({ commit, state }, { cell_index, height, width }) {
+      // upper cell
+      if (cell_index - width >= 0 && state.mineIndices.includes(cell_index - width)) {
+        commit('INCREMENT_NEIGHBOR_MINES')
+      }
+      // lower cell
+      if (cell_index + width <= (height * width - 1) && state.mineIndices.includes(cell_index + width)) {
+        commit('INCREMENT_NEIGHBOR_MINES')
+      }
+      // left cell
+      if (cell_index % width != 0 && state.mineIndices.includes(cell_index - 1)) {
+        commit('INCREMENT_NEIGHBOR_MINES')
+      }
+      // right cell
+      if (cell_index % width != (width - 1) && state.mineIndices.includes(cell_index + 1)) {
+        commit('INCREMENT_NEIGHBOR_MINES')
+      }
+      // upper left cell
+      if (cell_index % width != 0 && cell_index - width >= 0 && state.mineIndices.includes(cell_index - width - 1)) {
+        commit('INCREMENT_NEIGHBOR_MINES')
+      }
+      // upper right cell
+      if (cell_index % width != (width - 1) && cell_index - width >= 0 && state.mineIndices.includes(cell_index - width + 1)) {
+        commit('INCREMENT_NEIGHBOR_MINES')
+      }
+      // lower left cell
+      if (cell_index % width != 0 && cell_index + width <= (height * width - 1) && state.mineIndices.includes(cell_index + width - 1)) {
+        commit('INCREMENT_NEIGHBOR_MINES')
+      }
+      // lower right cell
+      if (cell_index % width != (width - 1) && cell_index + width <= (height * width - 1) && state.mineIndices.includes(cell_index + width + 1)) {
+        commit('INCREMENT_NEIGHBOR_MINES')
+      }
+    },
     getSquares({ commit }, { level }) {
       let squares = Array.from(document.querySelectorAll('.level' + level + ' div'))
       commit('GET_SQUARES', squares)
@@ -76,6 +161,9 @@ export default new Vuex.Store({
           i++
         }
       }
+    },
+    resetNeighborMines({ commit }) {
+      commit('RESET_NEIGHBOR_MINES')
     }
   },
   modules: {}
