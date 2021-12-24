@@ -1,5 +1,4 @@
 - Make mine image appear
-- Make methods global (vuex)
 - Make user confirm changing levels when in the middle of a level
 - Make it impossible to lose on first click
 - Reveal entire board after win or loss

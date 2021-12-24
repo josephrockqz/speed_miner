@@ -45,7 +45,7 @@ export default new Vuex.Store({
     }
   },
   actions: {
-    async checkCell({ commit, dispatch, state }, { cell_index, level }) {
+    async checkCell({ commit, dispatch, state }, { cell_index, height, level, width }) {
       // get square divs if haven't already
       if (state.squaresBool == false) {
         await dispatch('getSquares', {
@@ -57,8 +57,8 @@ export default new Vuex.Store({
         commit('CELL_UNCOVER', cell_index)
         await dispatch('getNeighborMinesRectangle', {
           cell_index: cell_index,
-          height: 10,
-          width: 10
+          height: height,
+          width: width
         })
         commit('CELL_NUMBER', cell_index)
         await dispatch('resetNeighborMines')
