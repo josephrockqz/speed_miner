@@ -11,7 +11,7 @@
       <div v-for="cell in cells"
            :key="cell"
            @click="checkCell(cell)"
-           @click.right.prevent="placeFlag(cell)"></div>
+           @click.right.prevent="$store.dispatch('placeFlag', {cell_index: cell, level: 1})"></div>
 
     </div>
 
@@ -32,25 +32,25 @@ export default {
   },
   computed: {
     ...mapState({
+      cells: 'cells',
       mineIndices: 'mineIndices',
-      squares: 'squares'
+      squares: 'squares',
+      squaresBool: 'squaresBool'
     })
   },
   data() {
     return {
-      cells: [],
-      getSquaresBool: false,
+      num_cells: 100,
       width: 420
     }
   },
   methods: {
     checkCell(cell_index) {
       // get square divs if haven't already
-      if (this.getSquaresBool == false) {
+      if (this.squaresBool == false) {
         store.dispatch('getSquares', {
           level: 1
         })
-        this.getSquaresBool = true
       }
       // empty cell is clicked
       if (!this.mineIndices.includes(cell_index) && !this.squares[cell_index].classList.contains('flag')) {
@@ -111,39 +111,19 @@ export default {
       game_over.innerText = "GAME OVER"
       level_box.appendChild(game_over)
     },
-    makeCells(num_cells) {
-      this.cells = Array.from(Array(num_cells).keys())
-    },
-    placeFlag(cell_index) {
-      // get square divs if haven't already
-      if (this.getSquaresBool == false) {
-        store.dispatch('getSquares', {
-          level: 1
-        })
-        this.getSquaresBool = true
-      }
-      // don't place flag if cell is uncovered
-      if (this.squares[cell_index].classList.contains('uncovered')) {
-        return
-      }
-      // place flag if one isn't in cell
-      if (!this.squares[cell_index].classList.contains('flag')) {
-        this.squares[cell_index].classList.add('flag')
-      }
-      // remove flag if one is already there
-      else {
-        this.squares[cell_index].classList.remove('flag')
-      }
-    },
     ...mapActions([
       'getSquares',
+      'makeCells',
+      'placeFlag',
       'placeMines'
     ])
   },
   mounted() {
-    this.makeCells(100)
+    store.dispatch('makeCells', {
+      num_cells: this.num_cells
+    })
     store.dispatch('placeMines', {
-      num_cells: 100,
+      num_cells: this.num_cells,
       num_mines: 10
     })
   }
