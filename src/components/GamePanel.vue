@@ -2,6 +2,7 @@
     <div class="d-flex flex-row game-panel">
       <h2>numMines</h2>
       <b-button>:)</b-button>
+      <b-button><router-link to="/">H</router-link></b-button>
       <h2>timeLapsed</h2>
     </div>
 </template>

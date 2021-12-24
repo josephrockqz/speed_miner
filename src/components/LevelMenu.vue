@@ -1,5 +1,5 @@
 <template>
-  <div id="nav">
+  <div id="nav" style="margin-top:15px;">
     <router-link v-for="level in levels"
                  :key="level"
                  :to="'/level' + level"

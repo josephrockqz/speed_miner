@@ -5,7 +5,7 @@
     <!--Game Panel-->
     <GamePanel/>
 
-    <div class="main-grid">
+    <div class="level1">
 
       <!--Game Grid-->
       <div v-for="cell in cells"
@@ -21,18 +21,25 @@
 
 <script>
 document.body.style.backgroundColor = '#e9e9e9'
+
 import GamePanel from '../components/GamePanel.vue'
+import { mapState, mapActions } from 'vuex'
+import store from '../store.js'
 
 export default {
   components: {
     GamePanel
   },
+  computed: {
+    ...mapState({
+      mineIndices: 'mineIndices',
+      squares: 'squares'
+    })
+  },
   data() {
     return {
       cells: [],
       getSquaresBool: false,
-      mineIndices: [],
-      squares: [],
       width: 420
     }
   },
@@ -40,7 +47,9 @@ export default {
     checkCell(cell_index) {
       // get square divs if haven't already
       if (this.getSquaresBool == false) {
-        this.getSquares()
+        store.dispatch('getSquares', {
+          level: 1
+        })
         this.getSquaresBool = true
       }
       // empty cell is clicked
@@ -102,16 +111,15 @@ export default {
       game_over.innerText = "GAME OVER"
       level_box.appendChild(game_over)
     },
-    getSquares() {
-      this.squares = Array.from(document.querySelectorAll('.main-grid div'))
-    },
     makeCells(num_cells) {
       this.cells = Array.from(Array(num_cells).keys())
     },
     placeFlag(cell_index) {
       // get square divs if haven't already
       if (this.getSquaresBool == false) {
-        this.getSquares()
+        store.dispatch('getSquares', {
+          level: 1
+        })
         this.getSquaresBool = true
       }
       // don't place flag if cell is uncovered
@@ -127,33 +135,36 @@ export default {
         this.squares[cell_index].classList.remove('flag')
       }
     },
-    placeMines(num_cells, num_mines) {
-      // function to get random integer in range of
-      // number of cells in the level
-      function getRandomInt(max) {
-        return Math.floor(Math.random() * max)
-      }
-      // code snippet gets the indices for the random
-      // placement of the mines in the level
-      let i = 0
-      while (i < num_mines) {
-        let placement = getRandomInt(num_cells)
-        if (!this.mineIndices.includes(placement)) {
-          this.mineIndices.push(placement)
-          i++
-        }
-      }
-    }
+    ...mapActions([
+      'getSquares',
+      'placeMines'
+    ])
   },
   mounted() {
-    console.log("hello")
     this.makeCells(100)
-    this.getSquares()
-    this.placeMines(100, 10)
+    store.dispatch('placeMines', {
+      num_cells: 100,
+      num_mines: 10
+    })
   }
 }
 </script>
 
 <style scoped>
-
+.level1 {
+  width: 420px;
+  height: 420px;
+  flex-wrap: wrap;
+  display: flex;
+  background-color: #999999;
+  border: #000000 10px solid;
+  margin: 0 auto;
+}
+.level1 div {
+  height: 40px;
+  width: 40px;
+  border: #ffffff 1px solid;
+  margin: 0px;
+  padding: 0px;
+}
 </style>

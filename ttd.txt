@@ -18,3 +18,4 @@
     + cookies
     + local storage
     + F12 Memory
+- Keep track of many statistics

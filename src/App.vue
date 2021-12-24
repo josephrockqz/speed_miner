@@ -6,8 +6,8 @@
       </h2>
       <img src="./assets/mine.png" style="max-height: 50px; padding: 8px 0px 0px 8px;" />
     </span>
-    <LevelMenu/>
     <router-view />
+    <LevelMenu/>
   </div>
 
 </template>
