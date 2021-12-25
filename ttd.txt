@@ -1,4 +1,4 @@
-- Make mine image appear
+- Make mine image appear on cell when needed
 - Make user confirm changing levels when in the middle of a level
 - Make it impossible to lose on first click
 - Reveal entire board after win or loss
@@ -11,7 +11,6 @@
 - Disable controls when game is over
 - Home page button on main icon
 - Consider making level menu only visible on home screen
-- Change title and icon of application on tab
 
 - Make more levels
     + make first couple levels easier
