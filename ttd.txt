@@ -15,6 +15,8 @@
 - Configure home screen
     + Directions
     + Night mode button
+- Make RectangleLevel component
+    + Use component in levels
 
 - Make more levels
     + make first couple levels easier

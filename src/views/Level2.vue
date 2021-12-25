@@ -39,7 +39,10 @@ export default {
   },
   data() {
     return {
+      height: 10,
       num_cells: 250,
+      num_mines: 35,
+      width: 25
     }
   },
   methods: {
@@ -57,15 +60,13 @@ export default {
   },
   async mounted() {
     await store.dispatch('instantiateRectangleDimensions', {
-      height: 10,
-      width: 25
+      height: this.height,
+      num_cells: this.num_cells,
+      num_mines: this.num_mines,
+      width: this.width
     })
     await store.dispatch('makeCells', {
       num_cells: this.num_cells
-    })
-    await store.dispatch('placeMines', {
-      num_cells: this.num_cells,
-      num_mines: 30
     })
   }
 }
