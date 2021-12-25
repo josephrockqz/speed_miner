@@ -2,7 +2,6 @@
     + mine image
     + flag image
 - Make user confirm changing levels when in the middle of a level
-- Make it impossible to lose on first click
 - Create panel above game board
     + button for starting new game
     + display number of mines left

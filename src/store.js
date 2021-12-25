@@ -6,11 +6,13 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     cells: [],
+    gameStartBool: false,
     height: 0,
     mineIndices: [],
+    numCells: 0,
+    numMines: 0,
     squares: [],
     squaresBool: false,
-    visitedBlankCells: new Set(),
     width: 0
   },
   mutations: {
@@ -19,6 +21,8 @@ export default new Vuex.Store({
     },
     CELL_NUMBER(state, payload) {
       state.squares[payload.cell_index].innerText = payload.number
+      state.squares[payload.cell_index].style.color = 'black'
+      state.squares[payload.cell_index].style.lineHeight = "40px"
     },
     CELL_UNCOVER(state, cell_index) {
       state.squares[cell_index].classList.add('uncovered')
@@ -35,6 +39,8 @@ export default new Vuex.Store({
     },
     INSTATIATE_RECTANGLE_DIMENSIONS(state, dimensions) {
       state.height = dimensions.height
+      state.numCells = dimensions.num_cells
+      state.numMines = dimensions.num_mines
       state.width = dimensions.width
     },
     MAKE_CELLS(state, cells) {
@@ -42,6 +48,9 @@ export default new Vuex.Store({
     },
     PLACE_MINE(state, mineIndex) {
       state.mineIndices.push(mineIndex)
+    },
+    SWITCH_GAME_START_BOOL_ON(state) {
+      state.gameStartBool = true
     }
   },
   actions: {
@@ -50,6 +59,15 @@ export default new Vuex.Store({
       if (state.squaresBool == false) {
         await dispatch('getSquares', {
           level: level
+        })
+      }
+      // if this is first cell being clicked, place mines
+      // this prevents someone from losing on first click
+      if (state.gameStartBool == false) {
+        await dispatch('placeMines', {
+          start_index: cell_index
+        }).then(() => {
+          commit('SWITCH_GAME_START_BOOL_ON')
         })
       }
       // empty cell is clicked
@@ -115,9 +133,11 @@ export default new Vuex.Store({
       let squares = Array.from(document.querySelectorAll('.level' + level + ' div'))
       commit('GET_SQUARES', squares)
     },
-    instantiateRectangleDimensions({ commit }, { height, width }) {
+    instantiateRectangleDimensions({ commit }, { height, num_cells, num_mines, width }) {
       commit('INSTATIATE_RECTANGLE_DIMENSIONS', {
         height: height,
+        num_cells: num_cells,
+        num_mines: num_mines,
         width: width
       })
     },
@@ -147,7 +167,7 @@ export default new Vuex.Store({
         // this.squares[cell_index].classList.remove('flag')
       }
     },
-    placeMines({ commit, state }, { num_cells, num_mines }) {
+    placeMines({ commit, state }, { start_index }) {
       // function to get random integer in range of
       // number of cells in the level
       function getRandomInt(max) {
@@ -156,9 +176,10 @@ export default new Vuex.Store({
       // code snippet gets the indices for the random
       // placement of the mines in the level
       let i = 0
-      while (i < num_mines) {
-        let placement = getRandomInt(num_cells)
-        if (!state.mineIndices.includes(placement)) {
+      console.log(state.numMines)
+      while (i < state.numMines) {
+        let placement = getRandomInt(state.numCells)
+        if (!state.mineIndices.includes(placement) && placement != start_index) {
           // state.mineIndices.push(placement)
           commit('PLACE_MINE', placement)
           i++
