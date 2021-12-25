@@ -2,19 +2,22 @@
 - Make user confirm changing levels when in the middle of a level
 - Make it impossible to lose on first click
 - Reveal entire board after win or loss
-- Display all blank cells if nearby mines are 0 and cell is not a mine
-    + can use bfs or dfs algorithm
 - Create panel above game board
     + button for starting new game
     + display number of mines left
     + display time
     + home page button
-- Diaable controls when game is over
+    + display current level
+- Disable controls when game is over
 - Home page button on main icon
 - Consider making level menu only visible on home screen
+- Change title and icon of application on tab
 
+- Make more levels
+    + make first couple levels easier
 - Research ways to store information on users
     + cookies
     + local storage
     + F12 Memory
 - Keep track of many statistics
+- Research how to help game for search engines

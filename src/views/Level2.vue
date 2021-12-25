@@ -10,7 +10,7 @@
       <!--Game Grid-->
       <div v-for="cell in cells"
            :key="cell"
-           @click="$store.dispatch('checkCell', {cell_index: cell, height: 10, level: 2, width: 25})"
+           @click="$store.dispatch('checkCell', {cell_index: cell, level: 2})"
            @click.right.prevent="$store.dispatch('placeFlag', {cell_index: cell, level: 2})"></div>
 
     </div>
@@ -48,17 +48,22 @@ export default {
       'gameOver',
       'getNeighborMinesRectangle',
       'getSquares',
+      'instantiateRectangleDimensions',
       'makeCells',
       'placeFlag',
       'placeMines',
-      'resetNeighborMines'
+      'uncoverCell'
     ])
   },
-  mounted() {
-    store.dispatch('makeCells', {
+  async mounted() {
+    await store.dispatch('instantiateRectangleDimensions', {
+      height: 10,
+      width: 25
+    })
+    await store.dispatch('makeCells', {
       num_cells: this.num_cells
     })
-    store.dispatch('placeMines', {
+    await store.dispatch('placeMines', {
       num_cells: this.num_cells,
       num_mines: 30
     })

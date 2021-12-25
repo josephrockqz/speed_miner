@@ -6,17 +6,19 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     cells: [],
+    height: 0,
     mineIndices: [],
-    numberOfNeighborMines: 0,
     squares: [],
-    squaresBool: false
+    squaresBool: false,
+    visitedBlankCells: new Set(),
+    width: 0
   },
   mutations: {
     CELL_MINE(state, cell_index) {
       state.squares[cell_index].classList.add('mine')
     },
-    CELL_NUMBER(state, cell_index) {
-      state.squares[cell_index].innerText = state.numberOfNeighborMines
+    CELL_NUMBER(state, payload) {
+      state.squares[payload.cell_index].innerText = payload.number
     },
     CELL_UNCOVER(state, cell_index) {
       state.squares[cell_index].classList.add('uncovered')
@@ -31,21 +33,19 @@ export default new Vuex.Store({
       state.squares = squares
       state.squaresBool = true
     },
-    INCREMENT_NEIGHBOR_MINES(state) {
-      state.numberOfNeighborMines++
+    INSTATIATE_RECTANGLE_DIMENSIONS(state, dimensions) {
+      state.height = dimensions.height
+      state.width = dimensions.width
     },
     MAKE_CELLS(state, cells) {
       state.cells = cells
     },
     PLACE_MINE(state, mineIndex) {
       state.mineIndices.push(mineIndex)
-    },
-    RESET_NEIGHBOR_MINES(state) {
-      state.numberOfNeighborMines = 0
     }
   },
   actions: {
-    async checkCell({ commit, dispatch, state }, { cell_index, height, level, width }) {
+    async checkCell({ commit, dispatch, state }, { cell_index, level }) {
       // get square divs if haven't already
       if (state.squaresBool == false) {
         await dispatch('getSquares', {
@@ -53,22 +53,17 @@ export default new Vuex.Store({
         })
       }
       // empty cell is clicked
-      if (!state.mineIndices.includes(cell_index) && !state.squares[cell_index].classList.contains('flag')) {
-        commit('CELL_UNCOVER', cell_index)
-        await dispatch('getNeighborMinesRectangle', {
-          cell_index: cell_index,
-          height: height,
-          width: width
+      if (!state.mineIndices.includes(cell_index)) {
+        await dispatch('uncoverCell', {
+          cell_index: cell_index
         })
-        commit('CELL_NUMBER', cell_index)
-        await dispatch('resetNeighborMines')
       } 
       // mine is clicked
       else if (state.mineIndices.includes(cell_index) && !state.squares[cell_index].classList.contains('flag')) {
-        let image_element = new Image(40,40)
-        image_element.src = "/src/assets/mine.png"
-        image_element.setAttribute("height", "40");
-        image_element.setAttribute("width", "40");
+        // let image_element = new Image(40,40)
+        // image_element.src = "/src/assets/mine.png"
+        // image_element.setAttribute("height", "40");
+        // image_element.setAttribute("width", "40");
         // this.squares[this.mineIndices[i]].appendChild(image_element)
         commit('CELL_MINE', cell_index)
         await dispatch('gameOver')
@@ -80,43 +75,51 @@ export default new Vuex.Store({
       game_over.innerText = "GAME OVER"
       level_box.appendChild(game_over)
     },
-    getNeighborMinesRectangle({ commit, state }, { cell_index, height, width }) {
+    async getNeighborMinesRectangle({ state }, { cell_index }) {
+      let numberOfNeighborMines = 0
       // upper cell
-      if (cell_index - width >= 0 && state.mineIndices.includes(cell_index - width)) {
-        commit('INCREMENT_NEIGHBOR_MINES')
+      if (cell_index - state.width >= 0 && state.mineIndices.includes(cell_index - state.width)) {
+        numberOfNeighborMines++
       }
       // lower cell
-      if (cell_index + width <= (height * width - 1) && state.mineIndices.includes(cell_index + width)) {
-        commit('INCREMENT_NEIGHBOR_MINES')
+      if (cell_index + state.width <= (state.height * state.width - 1) && state.mineIndices.includes(cell_index + state.width)) {
+        numberOfNeighborMines++
       }
       // left cell
-      if (cell_index % width != 0 && state.mineIndices.includes(cell_index - 1)) {
-        commit('INCREMENT_NEIGHBOR_MINES')
+      if (cell_index % state.width != 0 && state.mineIndices.includes(cell_index - 1)) {
+        numberOfNeighborMines++
       }
       // right cell
-      if (cell_index % width != (width - 1) && state.mineIndices.includes(cell_index + 1)) {
-        commit('INCREMENT_NEIGHBOR_MINES')
+      if (cell_index % state.width != (state.width - 1) && state.mineIndices.includes(cell_index + 1)) {
+        numberOfNeighborMines++
       }
       // upper left cell
-      if (cell_index % width != 0 && cell_index - width >= 0 && state.mineIndices.includes(cell_index - width - 1)) {
-        commit('INCREMENT_NEIGHBOR_MINES')
+      if (cell_index % state.width != 0 && cell_index - state.width >= 0 && state.mineIndices.includes(cell_index - state.width - 1)) {
+        numberOfNeighborMines++
       }
       // upper right cell
-      if (cell_index % width != (width - 1) && cell_index - width >= 0 && state.mineIndices.includes(cell_index - width + 1)) {
-        commit('INCREMENT_NEIGHBOR_MINES')
+      if (cell_index % state.width != (state.width - 1) && cell_index - state.width >= 0 && state.mineIndices.includes(cell_index - state.width + 1)) {
+        numberOfNeighborMines++
       }
       // lower left cell
-      if (cell_index % width != 0 && cell_index + width <= (height * width - 1) && state.mineIndices.includes(cell_index + width - 1)) {
-        commit('INCREMENT_NEIGHBOR_MINES')
+      if (cell_index % state.width != 0 && cell_index + state.width <= (state.height * state.width - 1) && state.mineIndices.includes(cell_index + state.width - 1)) {
+        numberOfNeighborMines++
       }
       // lower right cell
-      if (cell_index % width != (width - 1) && cell_index + width <= (height * width - 1) && state.mineIndices.includes(cell_index + width + 1)) {
-        commit('INCREMENT_NEIGHBOR_MINES')
+      if (cell_index % state.width != (state.width - 1) && cell_index + state.width <= (state.height * state.width - 1) && state.mineIndices.includes(cell_index + state.width + 1)) {
+        numberOfNeighborMines++
       }
+      return numberOfNeighborMines
     },
     getSquares({ commit }, { level }) {
       let squares = Array.from(document.querySelectorAll('.level' + level + ' div'))
       commit('GET_SQUARES', squares)
+    },
+    instantiateRectangleDimensions({ commit }, { height, width }) {
+      commit('INSTATIATE_RECTANGLE_DIMENSIONS', {
+        height: height,
+        width: width
+      })
     },
     makeCells({ commit }, { num_cells }) {
       let cells = Array.from(Array(num_cells).keys())
@@ -162,8 +165,84 @@ export default new Vuex.Store({
         }
       }
     },
-    resetNeighborMines({ commit }) {
-      commit('RESET_NEIGHBOR_MINES')
+    async recurseBlankCellsRectangle({ commit, dispatch, state }, { cell_index }) {
+      // first, uncover the cell
+      commit('CELL_UNCOVER', cell_index)
+
+      // upper cell
+      if (cell_index - state.width >= 0 && !state.mineIndices.includes(cell_index - state.width)) {
+        dispatch('uncoverCell', {
+          cell_index: cell_index - state.width
+        })
+      }
+      // lower cell
+      if (cell_index + state.width <= (state.height * state.width - 1) && !state.mineIndices.includes(cell_index + state.width)) {
+        dispatch('uncoverCell', {
+          cell_index: cell_index + state.width
+        })
+      }
+      // left cell
+      if (cell_index % state.width != 0 && !state.mineIndices.includes(cell_index - 1)) {
+        dispatch('uncoverCell', {
+          cell_index: cell_index - 1
+        })
+      }
+      // right cell
+      if (cell_index % state.width != (state.width - 1) && !state.mineIndices.includes(cell_index + 1)) {
+        dispatch('uncoverCell', {
+          cell_index: cell_index + 1
+        })
+      }
+      // upper left cell
+      if (cell_index % state.width != 0 && cell_index - state.width >= 0 && !state.mineIndices.includes(cell_index - state.width - 1)) {
+        dispatch('uncoverCell', {
+          cell_index: cell_index - state.width - 1
+        })
+      }
+      // upper right cell
+      if (cell_index % state.width != (state.width - 1) && cell_index - state.width >= 0 && !state.mineIndices.includes(cell_index - state.width + 1)) {
+        dispatch('uncoverCell', {
+          cell_index: cell_index - state.width + 1
+        })
+      }
+      // lower left cell
+      if (cell_index % state.width != 0 && cell_index + state.width <= (state.height * state.width - 1) && !state.mineIndices.includes(cell_index + state.width - 1)) {
+        dispatch('uncoverCell', {
+          cell_index: cell_index + state.width - 1
+        })
+      }
+      // lower right cell
+      if (cell_index % state.width != (state.width - 1) && cell_index + state.width <= (state.height * state.width - 1) && !state.mineIndices.includes(cell_index + state.width + 1)) {
+        dispatch('uncoverCell', {
+          cell_index: cell_index + state.width + 1
+        })
+      }
+    },
+    async uncoverCell({ commit, dispatch, state }, { cell_index }) {
+      if (state.squares[cell_index].classList.contains('uncovered') || state.squares[cell_index].classList.contains('flag') || state.squares[cell_index].classList.contains('mine')) {
+        return
+      }
+      commit('CELL_UNCOVER', cell_index) // uncover cell
+      // get number of nearby mines
+      dispatch('getNeighborMinesRectangle', {
+        cell_index: cell_index
+      }).then(payload => {
+        console.log(payload)
+        // don't show number if there are no neighbor mines
+        if (payload == 0) {
+          // recursive method to reveal all possible blank cells
+          dispatch('recurseBlankCellsRectangle', {
+            cell_index: cell_index
+          })
+        }
+        // show number if there is 1 or more mine nearby
+        else {
+          commit('CELL_NUMBER', {
+            cell_index: cell_index,
+            number: payload
+          })
+        }
+      })
     }
   },
   modules: {}
