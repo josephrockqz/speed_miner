@@ -1,22 +1,29 @@
-- Make mine image appear on cell when needed
+- Make images appear when needed
+    + mine image
+    + flag image
 - Make user confirm changing levels when in the middle of a level
 - Make it impossible to lose on first click
-- Reveal entire board after win or loss
 - Create panel above game board
     + button for starting new game
     + display number of mines left
     + display time
     + home page button
     + display current level
-- Disable controls when game is over
-- Home page button on main icon
-- Consider making level menu only visible on home screen
+-Handling when game is over
+    + Reveal entire board
+    + Disable controls
+    + Give restart button functionality
+- Configure home screen
+    + Directions
+    + Night mode button
 
 - Make more levels
     + make first couple levels easier
 - Research ways to store information on users
     + cookies
+        - ask to accept cookies
     + local storage
     + F12 Memory
 - Keep track of many statistics
 - Research how to help game for search engines
+- Add animation or something sudden when mine is pressed

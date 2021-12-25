@@ -1,13 +1,17 @@
 <template>
     <div>
-        Clear all the empty spaces without landing on a mine
-        Directions
-        Night mode
+        <LevelMenu/>
     </div>
 </template>
 
 <script>
+import LevelMenu from '../components/LevelMenu.vue'
 
+export default {
+  components: {
+    LevelMenu
+  }
+}
 </script>
 
 <style scoped>

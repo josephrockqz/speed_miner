@@ -4,21 +4,26 @@
       <h2 style="padding: 8px 0px 0px 8px;">
         <strong style="color: black">Speed Miner</strong>
       </h2>
-      <img src="./assets/mine.png" style="max-height: 50px; padding: 8px 0px 0px 8px;" />
+      <img src="./assets/mine.png"
+           style="max-height: 50px; padding: 8px 0px 0px 8px; cursor: pointer;"
+           @click="goToHome" />
     </span>
     <router-view />
-    <LevelMenu/>
   </div>
 
 </template>
 
 <script>
-import LevelMenu from './components/LevelMenu.vue'
-
 export default {
   name: 'App',
-  components: {
-    LevelMenu
+  components: {},
+  methods: {
+    goToHome() {
+      console.log(this.$route.name)
+      if (this.$route.name != 'Home') {
+        this.$router.push('/')
+      }
+    }
   }
 }
 </script>
