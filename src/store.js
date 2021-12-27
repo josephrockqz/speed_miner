@@ -6,6 +6,7 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     cells: [],
+    disableGridBool: false,
     gameStartBool: false,
     height: 0,
     mineIndices: new Set(),
@@ -29,6 +30,9 @@ export default new Vuex.Store({
     },
     CELL_UNCOVER(state, cell_index) {
       state.squares[cell_index].classList.add('uncovered')
+    },
+    DISABLE_GRID(state) {
+      state.disableGridBool = true
     },
     END_TIMER(state) {
       clearInterval(state.timer)
@@ -74,6 +78,9 @@ export default new Vuex.Store({
   },
   actions: {
     async checkCell({ commit, dispatch, state }, { cell_index, level }) {
+      if (state.disableGridBool == true) {
+        return
+      }
       // get square divs if haven't already
       if (state.squaresBool == false) {
         await dispatch('getSquares', {
@@ -111,8 +118,9 @@ export default new Vuex.Store({
         await dispatch('gameLoss')
       }
     },
-    async gameLoss({ commit, dispatch }) {
+    gameLoss({ commit, dispatch }) {
       commit('END_TIMER')
+      commit('DISABLE_GRID')
       let level_box = document.getElementById('levelbox')
       let game_over = document.createElement('h1')
       game_over.innerText = "GAME OVER"
@@ -172,6 +180,9 @@ export default new Vuex.Store({
       commit('MAKE_CELLS', cells)
     },
     placeFlag({ commit, state }, { cell_index }) {
+      if (state.disableGridBool == true) {
+        return
+      }
       // don't place flag if cell is uncovered
       if (state.squares[cell_index].classList.contains('uncovered') || state.squares[cell_index].classList.contains('mine')) {
         return

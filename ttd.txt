@@ -9,7 +9,6 @@
     + home page button
     + display current level
 -Handling when game is over
-    + Disable controls
     + Give restart button functionality
 - Configure home screen
     + Directions
