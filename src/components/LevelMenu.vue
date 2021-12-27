@@ -2,10 +2,12 @@
 
   <div id="nav" style="margin-top:15px;">
 
-    <router-link v-for="level in levels"
-                 :key="level"
-                 :to="'/level' + level"
-                 style="margin: 10px;">{{ level }}</router-link>
+    <b-button v-for="level in levels"
+              :key="level"
+              @click="$router.push('/level' + level)"
+              style="margin: 10px;"
+              size="lg"
+              variant="secondary">{{ level }}</b-button>
 
   </div>
 
