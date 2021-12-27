@@ -3,12 +3,9 @@
     + flag image
 - Make user confirm changing levels when in the middle of a level
 - Create panel above game board
-    + button for starting new game
     + display number of mines left
-    + display time
-    + home page button
     + display current level
-- Handle Game win
+    + make it look better
 - Configure home screen
     + Directions
     + Night mode button

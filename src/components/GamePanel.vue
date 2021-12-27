@@ -2,6 +2,7 @@
     <div class="d-flex flex-row game-panel">
       <h2>numMines</h2>
       <b-button @click="$store.dispatch('restartGame')">:)</b-button>
+      <h2>L</h2>
       <b-button @click="$router.push('/')">H</b-button>
       <h2>{{ timeElapsed }}</h2>
     </div>

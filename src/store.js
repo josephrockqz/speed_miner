@@ -67,6 +67,9 @@ export default new Vuex.Store({
     RESET_MINES(state) {
       state.mineIndices = new Set()
     },
+    RESET_TIME_ELPASED(state) {
+      state.timeElapsed = 0
+    },
     START_TIMER(state) {
       state.timer = window.setInterval(() => {
         let current_time = Date.now()
@@ -114,6 +117,15 @@ export default new Vuex.Store({
         // check to see if uncovered cell is last cell to uncover
         // if so, trigger gameWin action
         // get exact time it took to clear board
+        let game_win_bool = true
+        for (let i = 0; i < state.numCells; i++) {
+          if (!state.mineIndices.has(i) && !state.squares[i].classList.contains('uncovered')) {
+            game_win_bool = false
+          }
+        }
+        if (game_win_bool == true) {
+          await dispatch('gameWin')
+        }
       } 
       // mine is clicked
       else if (state.mineIndices.has(cell_index) && !state.squares[cell_index].classList.contains('flag')) {
@@ -133,6 +145,15 @@ export default new Vuex.Store({
       let game_over = document.createElement('h1')
       game_over.innerText = "GAME OVER"
       level_box.appendChild(game_over)
+      dispatch('revealGrid')
+    },
+    gameWin({ commit, dispatch }) {
+      commit('END_TIMER')
+      commit('DISABLE_GRID')
+      let level_box = document.getElementById('levelbox')
+      let game_win = document.createElement('h1')
+      game_win.innerText = "YOU WON"
+      level_box.appendChild(game_win)
       dispatch('revealGrid')
     },
     getNeighborMinesRectangle({ state }, { cell_index }) {
@@ -281,6 +302,7 @@ export default new Vuex.Store({
       commit('ENABLE_GRID')
       commit('END_TIMER')
       commit('RESET_MINES')
+      commit('RESET_TIME_ELPASED')
       for (let i = 0; i < state.numCells; i++) {
         state.squares[i].removeAttribute('class')
         state.squares[i].innerText = ''
