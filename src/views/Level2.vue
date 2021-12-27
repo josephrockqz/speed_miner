@@ -48,7 +48,7 @@ export default {
   methods: {
     ...mapActions([
       'checkCell',
-      'gameOver',
+      'gameLoss',
       'getNeighborMinesRectangle',
       'getSquares',
       'instantiateRectangleDimensions',

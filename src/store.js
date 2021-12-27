@@ -15,6 +15,7 @@ export default new Vuex.Store({
     squaresBool: false,
     startTime: null,
     timeElapsed: 0,
+    timer: null,
     width: 0
   },
   mutations: {
@@ -28,6 +29,9 @@ export default new Vuex.Store({
     },
     CELL_UNCOVER(state, cell_index) {
       state.squares[cell_index].classList.add('uncovered')
+    },
+    END_TIMER(state) {
+      clearInterval(state.timer)
     },
     FLAG_ADD(state, cell_index) {
       state.squares[cell_index].classList.add('flag')
@@ -51,19 +55,21 @@ export default new Vuex.Store({
     PLACE_MINE(state, mineIndex) {
       state.mineIndices.push(mineIndex)
     },
+    START_TIMER(state) {
+      state.timer = window.setInterval(() => {
+        let current_time = Date.now()
+        let time_elapsed = current_time - state.startTime
+        time_elapsed /= 1000
+        time_elapsed = Math.round(time_elapsed)
+        state.timeElapsed = time_elapsed
+      }, 1000)
+    },
     SET_START_TIME(state) {
       let start_time = Date.now()
       state.startTime = start_time
     },
     SWITCH_GAME_START_BOOL_ON(state) {
       state.gameStartBool = true
-    },
-    UPDATE_TIMER(state) {
-      let current_time = Date.now()
-      let time_elapsed = current_time - state.startTime
-      time_elapsed /= 1000
-      time_elapsed = Math.round(time_elapsed)
-      state.timeElapsed = time_elapsed
     }
   },
   actions: {
@@ -86,9 +92,13 @@ export default new Vuex.Store({
       }
       // empty cell is clicked
       if (!state.mineIndices.includes(cell_index)) {
+        // uncover cell
         await dispatch('uncoverCell', {
           cell_index: cell_index
         })
+        // check to see if uncovered cell is last cell to uncover
+        // if so, trigger gameWin action
+        // get exact time it took to clear board
       } 
       // mine is clicked
       else if (state.mineIndices.includes(cell_index) && !state.squares[cell_index].classList.contains('flag')) {
@@ -98,10 +108,11 @@ export default new Vuex.Store({
         // image_element.setAttribute("width", "40");
         // this.squares[this.mineIndices[i]].appendChild(image_element)
         commit('CELL_MINE', cell_index)
-        await dispatch('gameOver')
+        await dispatch('gameLoss')
       }
     },
-    gameOver() {
+    gameLoss() {
+      this.commit('END_TIMER')
       let level_box = document.getElementById('levelbox')
       let game_over = document.createElement('h1')
       game_over.innerText = "GAME OVER"
@@ -248,9 +259,7 @@ export default new Vuex.Store({
     },
     startGame({ commit }) {
       commit('SET_START_TIME')
-      window.setInterval(() => {
-        commit('UPDATE_TIMER')
-      }, 1000)
+      commit('START_TIMER')
     },
     uncoverCell({ commit, dispatch, state }, { cell_index }) {
       if (state.squares[cell_index].classList.contains('uncovered') || state.squares[cell_index].classList.contains('flag') || state.squares[cell_index].classList.contains('mine')) {
