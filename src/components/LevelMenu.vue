@@ -1,10 +1,14 @@
 <template>
+
   <div id="nav" style="margin-top:15px;">
+
     <router-link v-for="level in levels"
                  :key="level"
                  :to="'/level' + level"
                  style="margin: 10px;">{{ level }}</router-link>
+
   </div>
+
 </template>
 
 <script>

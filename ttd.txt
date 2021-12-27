@@ -3,7 +3,6 @@
     + flag image
 - Make user confirm changing levels when in the middle of a level
 - Create panel above game board
-    + display number of mines left
     + display current level
     + make it look better
 - Make RectangleLevel component

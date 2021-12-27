@@ -47,15 +47,8 @@ export default {
   },
   methods: {
     ...mapActions([
-      'checkCell',
-      'gameLoss',
-      'getNeighborMinesRectangle',
-      'getSquares',
       'instantiateRectangleDimensions',
-      'makeCells',
-      'placeFlag',
-      'placeMines',
-      'uncoverCell'
+      'makeCells'
     ])
   },
   async mounted() {

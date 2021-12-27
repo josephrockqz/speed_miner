@@ -331,7 +331,6 @@ export default new Vuex.Store({
         state.squares[i].removeAttribute('class')
         state.squares[i].innerText = ''
       }
-      console.log(state)
     },
     async revealGrid({ commit, dispatch, state }) {
       for (let i = 0; i < state.numCells; i++) {
