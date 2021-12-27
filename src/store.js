@@ -153,7 +153,7 @@ export default new Vuex.Store({
         })
       }
       // don't place flag if cell is uncovered
-      if (state.squares[cell_index].classList.contains('uncovered')) {
+      if (state.squares[cell_index].classList.contains('uncovered') || state.squares[cell_index].classList.contains('mine')) {
         return
       }
       // place flag if one isn't in cell
