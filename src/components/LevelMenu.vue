@@ -17,7 +17,8 @@ export default {
     return {
       levels: [
         1,
-        2
+        2,
+        3
       ]
     }
   }

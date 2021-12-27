@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import Home from './views/Home'
 import Level1 from './views/Level1.vue'
 import Level2 from './views/Level2.vue'
+import Level3 from './views/Level3.vue'
 
 Vue.use(VueRouter)
 
@@ -21,6 +22,11 @@ const routes = [
     path: '/level2',
     name: 'Level2',
     component: Level2
+  },
+  {
+    path: '/level3',
+    name: 'Level3',
+    component: Level3
   }
 ]
 

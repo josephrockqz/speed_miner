@@ -2,16 +2,17 @@
     + mine image
     + flag image
 - Make panel above game board look better
-- Make RectangleLevel component
-    + Use component in levels
+- Make home screen look better
+- Post scores in database
+    + after game win, modal for entering name
+    + use MongoDB probably
+    + Display top scores for level somewhere on level view
 
-- Make more levels
-    + make first couple levels easier
 - Research ways to store information on users
     + cookies
         - ask to accept cookies
     + local storage
     + F12 Memory
-- Keep track of many statistics
 - Research how to help game for search engines
 - Add animation or something sudden when mine is pressed
+    + can also add noise
