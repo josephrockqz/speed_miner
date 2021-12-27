@@ -13,6 +13,8 @@ export default new Vuex.Store({
     numMines: 0,
     squares: [],
     squaresBool: false,
+    startTime: null,
+    timeElapsed: 0,
     width: 0
   },
   mutations: {
@@ -49,8 +51,19 @@ export default new Vuex.Store({
     PLACE_MINE(state, mineIndex) {
       state.mineIndices.push(mineIndex)
     },
+    SET_START_TIME(state) {
+      let start_time = Date.now()
+      state.startTime = start_time
+    },
     SWITCH_GAME_START_BOOL_ON(state) {
       state.gameStartBool = true
+    },
+    UPDATE_TIMER(state) {
+      let current_time = Date.now()
+      let time_elapsed = current_time - state.startTime
+      time_elapsed /= 1000
+      time_elapsed = Math.round(time_elapsed)
+      state.timeElapsed = time_elapsed
     }
   },
   actions: {
@@ -60,6 +73,7 @@ export default new Vuex.Store({
         await dispatch('getSquares', {
           level: level
         })
+        await dispatch('startGame')
       }
       // if this is first cell being clicked, place mines
       // this prevents someone from losing on first click
@@ -93,7 +107,7 @@ export default new Vuex.Store({
       game_over.innerText = "GAME OVER"
       level_box.appendChild(game_over)
     },
-    async getNeighborMinesRectangle({ state }, { cell_index }) {
+    getNeighborMinesRectangle({ state }, { cell_index }) {
       let numberOfNeighborMines = 0
       // upper cell
       if (cell_index - state.width >= 0 && state.mineIndices.includes(cell_index - state.width)) {
@@ -145,13 +159,7 @@ export default new Vuex.Store({
       let cells = Array.from(Array(num_cells).keys())
       commit('MAKE_CELLS', cells)
     },
-    async placeFlag({ commit, dispatch, state }, { cell_index, level }) {
-      // get square divs if haven't already
-      if (state.squaresBool == false) {
-        await dispatch('getSquares', {
-          level: level
-        })
-      }
+    placeFlag({ commit, state }, { cell_index }) {
       // don't place flag if cell is uncovered
       if (state.squares[cell_index].classList.contains('uncovered') || state.squares[cell_index].classList.contains('mine')) {
         return
@@ -176,7 +184,6 @@ export default new Vuex.Store({
       // code snippet gets the indices for the random
       // placement of the mines in the level
       let i = 0
-      console.log(state.numMines)
       while (i < state.numMines) {
         let placement = getRandomInt(state.numCells)
         if (!state.mineIndices.includes(placement) && placement != start_index) {
@@ -186,7 +193,7 @@ export default new Vuex.Store({
         }
       }
     },
-    async recurseBlankCellsRectangle({ commit, dispatch, state }, { cell_index }) {
+    recurseBlankCellsRectangle({ commit, dispatch, state }, { cell_index }) {
       // first, uncover the cell
       commit('CELL_UNCOVER', cell_index)
 
@@ -239,7 +246,13 @@ export default new Vuex.Store({
         })
       }
     },
-    async uncoverCell({ commit, dispatch, state }, { cell_index }) {
+    startGame({ commit }) {
+      commit('SET_START_TIME')
+      window.setInterval(() => {
+        commit('UPDATE_TIMER')
+      }, 1000)
+    },
+    uncoverCell({ commit, dispatch, state }, { cell_index }) {
       if (state.squares[cell_index].classList.contains('uncovered') || state.squares[cell_index].classList.contains('flag') || state.squares[cell_index].classList.contains('mine')) {
         return
       }
@@ -248,7 +261,6 @@ export default new Vuex.Store({
       dispatch('getNeighborMinesRectangle', {
         cell_index: cell_index
       }).then(payload => {
-        console.log(payload)
         // don't show number if there are no neighbor mines
         if (payload == 0) {
           // recursive method to reveal all possible blank cells

@@ -2,17 +2,23 @@
     <div class="d-flex flex-row game-panel">
       <h2>numMines</h2>
       <b-button>:)</b-button>
-      <b-button><router-link to="/">H</router-link></b-button>
-      <h2>timeLapsed</h2>
+      <b-button @click="$router.push('/')">H</b-button>
+      <h2>{{ timeElapsed }}</h2>
     </div>
 </template>
 
 <script>
-export default {
+import { mapState } from 'vuex'
 
+export default {
   data() {
     return {}
   },
+  computed: {
+    ...mapState({
+      timeElapsed: 'timeElapsed'
+    })
+  }
 }
 </script>
 
