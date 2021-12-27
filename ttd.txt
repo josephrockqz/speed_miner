@@ -8,7 +8,6 @@
     + make it look better
 - Configure home screen
     + Directions
-    + Night mode button
 - Make RectangleLevel component
     + Use component in levels
 

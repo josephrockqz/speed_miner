@@ -208,6 +208,9 @@ export default new Vuex.Store({
       let cells = Array.from(Array(num_cells).keys())
       commit('MAKE_CELLS', cells)
     },
+    nightMode() {
+      document.body.style.backgroundColor = '#555555'
+    },
     placeFlag({ commit, state }, { cell_index }) {
       if (state.disableGridBool == true) {
         return
