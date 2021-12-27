@@ -3,7 +3,7 @@
     <div class="d-flex flex-row game-panel">
       <h2>{{ numMinesLeft }}</h2>
       <b-button @click="$store.dispatch('restartGame')">:)</b-button>
-      <h2>L</h2>
+      <h2>{{ level }}</h2>
       <b-button @click="openModal">H</b-button>
       <h2>{{ timeElapsed }}</h2>
     </div>
@@ -42,7 +42,8 @@ export default {
     ...mapActions([
       'restartGame'
     ])
-  }
+  },
+  props: ['level']
 }
 </script>
 

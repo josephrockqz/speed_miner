@@ -3,7 +3,7 @@
   <div id="levelbox">
     
     <!--Game Panel-->
-    <GamePanel/>
+    <GamePanel :level="2"/>
 
     <div class="level2">
 
