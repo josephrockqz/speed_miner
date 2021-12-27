@@ -8,7 +8,7 @@ export default new Vuex.Store({
     cells: [],
     gameStartBool: false,
     height: 0,
-    mineIndices: [],
+    mineIndices: new Set(),
     numCells: 0,
     numMines: 0,
     squares: [],
@@ -53,7 +53,7 @@ export default new Vuex.Store({
       state.cells = cells
     },
     PLACE_MINE(state, mineIndex) {
-      state.mineIndices.push(mineIndex)
+      state.mineIndices.add(mineIndex)
     },
     START_TIMER(state) {
       state.timer = window.setInterval(() => {
@@ -91,7 +91,7 @@ export default new Vuex.Store({
         })
       }
       // empty cell is clicked
-      if (!state.mineIndices.includes(cell_index)) {
+      if (!state.mineIndices.has(cell_index)) {
         // uncover cell
         await dispatch('uncoverCell', {
           cell_index: cell_index
@@ -101,7 +101,7 @@ export default new Vuex.Store({
         // get exact time it took to clear board
       } 
       // mine is clicked
-      else if (state.mineIndices.includes(cell_index) && !state.squares[cell_index].classList.contains('flag')) {
+      else if (state.mineIndices.has(cell_index) && !state.squares[cell_index].classList.contains('flag')) {
         // let image_element = new Image(40,40)
         // image_element.src = "/src/assets/mine.png"
         // image_element.setAttribute("height", "40");
@@ -111,45 +111,46 @@ export default new Vuex.Store({
         await dispatch('gameLoss')
       }
     },
-    gameLoss() {
-      this.commit('END_TIMER')
+    async gameLoss({ commit, dispatch }) {
+      commit('END_TIMER')
       let level_box = document.getElementById('levelbox')
       let game_over = document.createElement('h1')
       game_over.innerText = "GAME OVER"
       level_box.appendChild(game_over)
+      dispatch('revealGrid')
     },
     getNeighborMinesRectangle({ state }, { cell_index }) {
       let numberOfNeighborMines = 0
       // upper cell
-      if (cell_index - state.width >= 0 && state.mineIndices.includes(cell_index - state.width)) {
+      if (cell_index - state.width >= 0 && state.mineIndices.has(cell_index - state.width)) {
         numberOfNeighborMines++
       }
       // lower cell
-      if (cell_index + state.width <= (state.height * state.width - 1) && state.mineIndices.includes(cell_index + state.width)) {
+      if (cell_index + state.width <= (state.height * state.width - 1) && state.mineIndices.has(cell_index + state.width)) {
         numberOfNeighborMines++
       }
       // left cell
-      if (cell_index % state.width != 0 && state.mineIndices.includes(cell_index - 1)) {
+      if (cell_index % state.width != 0 && state.mineIndices.has(cell_index - 1)) {
         numberOfNeighborMines++
       }
       // right cell
-      if (cell_index % state.width != (state.width - 1) && state.mineIndices.includes(cell_index + 1)) {
+      if (cell_index % state.width != (state.width - 1) && state.mineIndices.has(cell_index + 1)) {
         numberOfNeighborMines++
       }
       // upper left cell
-      if (cell_index % state.width != 0 && cell_index - state.width >= 0 && state.mineIndices.includes(cell_index - state.width - 1)) {
+      if (cell_index % state.width != 0 && cell_index - state.width >= 0 && state.mineIndices.has(cell_index - state.width - 1)) {
         numberOfNeighborMines++
       }
       // upper right cell
-      if (cell_index % state.width != (state.width - 1) && cell_index - state.width >= 0 && state.mineIndices.includes(cell_index - state.width + 1)) {
+      if (cell_index % state.width != (state.width - 1) && cell_index - state.width >= 0 && state.mineIndices.has(cell_index - state.width + 1)) {
         numberOfNeighborMines++
       }
       // lower left cell
-      if (cell_index % state.width != 0 && cell_index + state.width <= (state.height * state.width - 1) && state.mineIndices.includes(cell_index + state.width - 1)) {
+      if (cell_index % state.width != 0 && cell_index + state.width <= (state.height * state.width - 1) && state.mineIndices.has(cell_index + state.width - 1)) {
         numberOfNeighborMines++
       }
       // lower right cell
-      if (cell_index % state.width != (state.width - 1) && cell_index + state.width <= (state.height * state.width - 1) && state.mineIndices.includes(cell_index + state.width + 1)) {
+      if (cell_index % state.width != (state.width - 1) && cell_index + state.width <= (state.height * state.width - 1) && state.mineIndices.has(cell_index + state.width + 1)) {
         numberOfNeighborMines++
       }
       return numberOfNeighborMines
@@ -197,8 +198,8 @@ export default new Vuex.Store({
       let i = 0
       while (i < state.numMines) {
         let placement = getRandomInt(state.numCells)
-        if (!state.mineIndices.includes(placement) && placement != start_index) {
-          // state.mineIndices.push(placement)
+        if (!state.mineIndices.has(placement) && placement != start_index) {
+          // state.mineIndices.add(placement)
           commit('PLACE_MINE', placement)
           i++
         }
@@ -209,52 +210,67 @@ export default new Vuex.Store({
       commit('CELL_UNCOVER', cell_index)
 
       // upper cell
-      if (cell_index - state.width >= 0 && !state.mineIndices.includes(cell_index - state.width)) {
+      if (cell_index - state.width >= 0 && !state.mineIndices.has(cell_index - state.width)) {
         dispatch('uncoverCell', {
           cell_index: cell_index - state.width
         })
       }
       // lower cell
-      if (cell_index + state.width <= (state.height * state.width - 1) && !state.mineIndices.includes(cell_index + state.width)) {
+      if (cell_index + state.width <= (state.height * state.width - 1) && !state.mineIndices.has(cell_index + state.width)) {
         dispatch('uncoverCell', {
           cell_index: cell_index + state.width
         })
       }
       // left cell
-      if (cell_index % state.width != 0 && !state.mineIndices.includes(cell_index - 1)) {
+      if (cell_index % state.width != 0 && !state.mineIndices.has(cell_index - 1)) {
         dispatch('uncoverCell', {
           cell_index: cell_index - 1
         })
       }
       // right cell
-      if (cell_index % state.width != (state.width - 1) && !state.mineIndices.includes(cell_index + 1)) {
+      if (cell_index % state.width != (state.width - 1) && !state.mineIndices.has(cell_index + 1)) {
         dispatch('uncoverCell', {
           cell_index: cell_index + 1
         })
       }
       // upper left cell
-      if (cell_index % state.width != 0 && cell_index - state.width >= 0 && !state.mineIndices.includes(cell_index - state.width - 1)) {
+      if (cell_index % state.width != 0 && cell_index - state.width >= 0 && !state.mineIndices.has(cell_index - state.width - 1)) {
         dispatch('uncoverCell', {
           cell_index: cell_index - state.width - 1
         })
       }
       // upper right cell
-      if (cell_index % state.width != (state.width - 1) && cell_index - state.width >= 0 && !state.mineIndices.includes(cell_index - state.width + 1)) {
+      if (cell_index % state.width != (state.width - 1) && cell_index - state.width >= 0 && !state.mineIndices.has(cell_index - state.width + 1)) {
         dispatch('uncoverCell', {
           cell_index: cell_index - state.width + 1
         })
       }
       // lower left cell
-      if (cell_index % state.width != 0 && cell_index + state.width <= (state.height * state.width - 1) && !state.mineIndices.includes(cell_index + state.width - 1)) {
+      if (cell_index % state.width != 0 && cell_index + state.width <= (state.height * state.width - 1) && !state.mineIndices.has(cell_index + state.width - 1)) {
         dispatch('uncoverCell', {
           cell_index: cell_index + state.width - 1
         })
       }
       // lower right cell
-      if (cell_index % state.width != (state.width - 1) && cell_index + state.width <= (state.height * state.width - 1) && !state.mineIndices.includes(cell_index + state.width + 1)) {
+      if (cell_index % state.width != (state.width - 1) && cell_index + state.width <= (state.height * state.width - 1) && !state.mineIndices.has(cell_index + state.width + 1)) {
         dispatch('uncoverCell', {
           cell_index: cell_index + state.width + 1
         })
+      }
+    },
+    async revealGrid({ commit, dispatch, state }) {
+      for (let i = 0; i < state.numCells; i++) {
+        if (state.squares[i].classList.contains('flag')) {
+          continue
+        }
+        else if (!state.mineIndices.has(i) && !state.squares[i].classList.contains('uncovered')) {
+          await dispatch('uncoverCell', {
+            cell_index: i
+          })
+        }
+        else if (state.mineIndices.has(i) && !state.squares[i].classList.contains('mine')) {
+          commit('CELL_MINE', i)
+        }
       }
     },
     startGame({ commit }) {
