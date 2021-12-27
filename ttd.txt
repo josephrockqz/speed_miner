@@ -8,8 +8,7 @@
     + display time
     + home page button
     + display current level
--Handling when game is over
-    + Give restart button functionality
+- Handle Game win
 - Configure home screen
     + Directions
     + Night mode button

@@ -1,14 +1,14 @@
 <template>
     <div class="d-flex flex-row game-panel">
       <h2>numMines</h2>
-      <b-button>:)</b-button>
+      <b-button @click="$store.dispatch('restartGame')">:)</b-button>
       <b-button @click="$router.push('/')">H</b-button>
       <h2>{{ timeElapsed }}</h2>
     </div>
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 
 export default {
   data() {
@@ -18,6 +18,11 @@ export default {
     ...mapState({
       timeElapsed: 'timeElapsed'
     })
+  },
+  methods: {
+    ...mapActions([
+      'restartGame'
+    ])
   }
 }
 </script>

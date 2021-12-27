@@ -68,6 +68,7 @@ export default {
     await store.dispatch('makeCells', {
       num_cells: this.num_cells
     })
+    console.log(store.state)
   }
 }
 </script>

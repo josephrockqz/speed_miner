@@ -34,6 +34,11 @@ export default new Vuex.Store({
     DISABLE_GRID(state) {
       state.disableGridBool = true
     },
+    ENABLE_GRID(state) {
+      state.disableGridBool = false
+      state.squaresBool = false
+      state.gameStartBool = false
+    },
     END_TIMER(state) {
       clearInterval(state.timer)
     },
@@ -58,6 +63,9 @@ export default new Vuex.Store({
     },
     PLACE_MINE(state, mineIndex) {
       state.mineIndices.add(mineIndex)
+    },
+    RESET_MINES(state) {
+      state.mineIndices = new Set()
     },
     START_TIMER(state) {
       state.timer = window.setInterval(() => {
@@ -268,6 +276,16 @@ export default new Vuex.Store({
           cell_index: cell_index + state.width + 1
         })
       }
+    },
+    restartGame({ commit, state }) {
+      commit('ENABLE_GRID')
+      commit('END_TIMER')
+      commit('RESET_MINES')
+      for (let i = 0; i < state.numCells; i++) {
+        state.squares[i].removeAttribute('class')
+        state.squares[i].innerText = ''
+      }
+      console.log(state)
     },
     async revealGrid({ commit, dispatch, state }) {
       for (let i = 0; i < state.numCells; i++) {
