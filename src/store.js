@@ -98,8 +98,8 @@ export default new Vuex.Store({
     SWITCH_GAME_START_BOOL_ON(state) {
       state.gameStartBool = true
     },
-    TOGGLE_NIGHT_MODE(state, mode_num) {
-      if (mode_num == 0) {
+    TOGGLE_NIGHT_MODE(state, night_mode_bool) {
+      if (night_mode_bool == false) {
         state.backgroundColor = '#e9e9e9'
       } else {
         state.backgroundColor = '#555555'
@@ -351,8 +351,8 @@ export default new Vuex.Store({
       commit('SET_START_TIME')
       commit('START_TIMER')
     },
-    toggleNightMode({ commit }, { mode_num }) {
-      commit('TOGGLE_NIGHT_MODE', mode_num)
+    toggleNightMode({ commit }, { night_mode_bool }) {
+      commit('TOGGLE_NIGHT_MODE', night_mode_bool)
     },
     uncoverCell({ commit, dispatch, state }, { cell_index }) {
       if (state.squares[cell_index].classList.contains('uncovered') || state.squares[cell_index].classList.contains('flag') || state.squares[cell_index].classList.contains('mine')) {

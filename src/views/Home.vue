@@ -1,36 +1,42 @@
 <template>
+
+  <div>
+
+    <!-- Night Mode Checkbox -->
+    <b-checkbox v-model="nightMode">Night Mode</b-checkbox>
+
+    <!-- Controls -->
     <div>
-        <b-form-checkbox-group
-          v-model="nightMode"
-          :options="options"
-          class="mb-3"
-          value-field="item"
-          text-field="name"
-          disabled-field="notEnabled"
-        ></b-form-checkbox-group>
-        <div>
-          <h2>Controls</h2>
-          <ul>
-            <li>Left click to reveal a cell</li>
-            <li>Right click to place a flag to mark a mine</li>
-          </ul>
-        </div>
-        <LevelMenu/>
+      <h2>Controls</h2>
+      <ul>
+        <li>Left click to reveal a cell</li>
+        <li>Right click to place a flag to mark a mine</li>
+      </ul>
     </div>
+
+    <!-- Level Menu Component -->
+    <LevelMenu/>
+  </div>
+
 </template>
 
 <script>
 import LevelMenu from '../components/LevelMenu.vue'
-import { mapActions } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 import store from '../store.js'
 
 export default {
   components: {
     LevelMenu
   },
+  computed: {
+    ...mapState({
+      backgroundColor: 'backgroundColor'
+    })
+  },
   data() {
     return {
-      nightMode: [],
+      nightMode: false,
       options: [
         { item: 'Night Mode', name: 'Night Mode' }
       ]
@@ -41,10 +47,17 @@ export default {
       'toggleNightMode'
     ])
   },
+  mounted() {
+    if (this.backgroundColor == '#e9e9e9') {
+      this.nightMode = false
+    } else {
+      this.nightMode = true
+    }
+  },
   watch: {
     async nightMode() {
       await store.dispatch('toggleNightMode', {
-        mode_num: this.nightMode.length
+        night_mode_bool: this.nightMode
       })
     }
   }
