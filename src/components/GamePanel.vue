@@ -1,6 +1,6 @@
 <template>
     <div class="d-flex flex-row game-panel">
-      <h2>numMines</h2>
+      <h2>{{ numMinesLeft }}</h2>
       <b-button @click="$store.dispatch('restartGame')">:)</b-button>
       <h2>L</h2>
       <b-button @click="$router.push('/')">H</b-button>
@@ -17,6 +17,7 @@ export default {
   },
   computed: {
     ...mapState({
+      numMinesLeft: 'numMinesLeft',
       timeElapsed: 'timeElapsed'
     })
   },

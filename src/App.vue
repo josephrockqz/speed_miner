@@ -14,15 +14,30 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
+
 export default {
   name: 'App',
   components: {},
+  computed: {
+    ...mapState({
+      backgroundColor: 'backgroundColor'
+    })
+  },
   methods: {
     goToHome() {
       console.log(this.$route.name)
       if (this.$route.name != 'Home') {
         this.$router.push('/')
       }
+    }
+  },
+  mounted() {
+    document.body.style.backgroundColor = this.backgroundColor
+  },
+  watch: {
+    backgroundColor() {
+      document.body.style.backgroundColor = this.backgroundColor
     }
   }
 }

@@ -6,8 +6,6 @@
     + display number of mines left
     + display current level
     + make it look better
-- Configure home screen
-    + Directions
 - Make RectangleLevel component
     + Use component in levels
 

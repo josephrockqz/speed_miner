@@ -5,6 +5,7 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
+    backgroundColor: '#e9e9e9',
     cells: [],
     disableGridBool: false,
     gameStartBool: false,
@@ -12,6 +13,7 @@ export default new Vuex.Store({
     mineIndices: new Set(),
     numCells: 0,
     numMines: 0,
+    numMinesLeft: 0,
     squares: [],
     squaresBool: false,
     startTime: null,
@@ -30,6 +32,9 @@ export default new Vuex.Store({
     },
     CELL_UNCOVER(state, cell_index) {
       state.squares[cell_index].classList.add('uncovered')
+    },
+    DECREMENT_MINE_COUNTER(state) {
+      state.numMinesLeft--
     },
     DISABLE_GRID(state) {
       state.disableGridBool = true
@@ -52,10 +57,14 @@ export default new Vuex.Store({
       state.squares = squares
       state.squaresBool = true
     },
+    INCREMENT_MINE_COUNTER(state) {
+      state.numMinesLeft++
+    },
     INSTATIATE_RECTANGLE_DIMENSIONS(state, dimensions) {
       state.height = dimensions.height
       state.numCells = dimensions.num_cells
       state.numMines = dimensions.num_mines
+      state.numMinesLeft = dimensions.num_mines
       state.width = dimensions.width
     },
     MAKE_CELLS(state, cells) {
@@ -63,6 +72,9 @@ export default new Vuex.Store({
     },
     PLACE_MINE(state, mineIndex) {
       state.mineIndices.add(mineIndex)
+    },
+    RESET_MINE_COUNTER(state) {
+      state.numMinesLeft = state.numMines
     },
     RESET_MINES(state) {
       state.mineIndices = new Set()
@@ -85,6 +97,16 @@ export default new Vuex.Store({
     },
     SWITCH_GAME_START_BOOL_ON(state) {
       state.gameStartBool = true
+    },
+    TOGGLE_NIGHT_MODE(state, mode_num) {
+      if (mode_num == 0) {
+        state.backgroundColor = '#e9e9e9'
+      } else {
+        state.backgroundColor = '#555555'
+      }
+    },
+    ZERO_MINE_COUNTER(state) {
+      state.numMinesLeft = 0
     }
   },
   actions: {
@@ -150,6 +172,7 @@ export default new Vuex.Store({
     gameWin({ commit, dispatch }) {
       commit('END_TIMER')
       commit('DISABLE_GRID')
+      commit('ZERO_MINE_COUNTER')
       let level_box = document.getElementById('levelbox')
       let game_win = document.createElement('h1')
       game_win.innerText = "YOU WON"
@@ -208,9 +231,6 @@ export default new Vuex.Store({
       let cells = Array.from(Array(num_cells).keys())
       commit('MAKE_CELLS', cells)
     },
-    nightMode() {
-      document.body.style.backgroundColor = '#555555'
-    },
     placeFlag({ commit, state }, { cell_index }) {
       if (state.disableGridBool == true) {
         return
@@ -222,12 +242,12 @@ export default new Vuex.Store({
       // place flag if one isn't in cell
       if (!state.squares[cell_index].classList.contains('flag')) {
         commit('FLAG_ADD', cell_index)
-        // this.squares[cell_index].classList.add('flag')
+        commit('DECREMENT_MINE_COUNTER')
       }
       // remove flag if one is already there
       else {
         commit('FLAG_REMOVE', cell_index)
-        // this.squares[cell_index].classList.remove('flag')
+        commit('INCREMENT_MINE_COUNTER')
       }
     },
     placeMines({ commit, state }, { start_index }) {
@@ -306,6 +326,7 @@ export default new Vuex.Store({
       commit('END_TIMER')
       commit('RESET_MINES')
       commit('RESET_TIME_ELPASED')
+      commit('RESET_MINE_COUNTER')
       for (let i = 0; i < state.numCells; i++) {
         state.squares[i].removeAttribute('class')
         state.squares[i].innerText = ''
@@ -330,6 +351,9 @@ export default new Vuex.Store({
     startGame({ commit }) {
       commit('SET_START_TIME')
       commit('START_TIMER')
+    },
+    toggleNightMode({ commit }, { mode_num }) {
+      commit('TOGGLE_NIGHT_MODE', mode_num)
     },
     uncoverCell({ commit, dispatch, state }, { cell_index }) {
       if (state.squares[cell_index].classList.contains('uncovered') || state.squares[cell_index].classList.contains('flag') || state.squares[cell_index].classList.contains('mine')) {

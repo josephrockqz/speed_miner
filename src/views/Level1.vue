@@ -20,8 +20,6 @@
 </template>
 
 <script>
-document.body.style.backgroundColor = '#e9e9e9'
-
 import GamePanel from '../components/GamePanel.vue'
 import { mapState, mapActions } from 'vuex'
 import store from '../store.js'
