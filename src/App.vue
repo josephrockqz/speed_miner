@@ -63,6 +63,13 @@ export default {
   background-image: url('assets/flag.png');
   background-size: 40px;
 }
+.flag-misplaced {
+  background-color: #999999;
+  background-image: url('assets/flag_misplaced.png');
+  background-position-x: -1px;
+  background-position-y: -1px;
+  background-size: 40px;
+}
 .mine {
   background-color: #bdbdbd;
   background-image: url('assets/mine.png');

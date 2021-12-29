@@ -402,8 +402,14 @@ export default new Vuex.Store({
     },
     revealGridAfterLoss({ commit, state }) {
       for (let i = 0; i < state.numCells; i++) {
+        // reveal mines
         if (state.mineIndices.has(i) && !state.squares[i].classList.contains('flag')) {
           commit('CELL_MINE', i)
+        }
+        // case where flag is incorrectly places
+        else if (!state.mineIndices.has(i) && state.squares[i].classList.contains('flag')) {
+          state.squares[i].removeAttribute('class')
+          state.squares[i].classList.add('flag-misplaced')
         }
       }
     },
