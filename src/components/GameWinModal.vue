@@ -20,7 +20,6 @@
       <button :disabled="checkNameFill()" @click.prevent="submitScore()">
         Submit
       </button>
-      <div />
     </div>
   </b-modal>
 

@@ -9,6 +9,7 @@ export default new Vuex.Store({
     cells: [],
     disableGridBool: false,
     gameStartBool: false,
+    gameLossModalBool: false,
     gameWinModalBool: false,
     height: 0,
     level: 0,
@@ -34,6 +35,9 @@ export default new Vuex.Store({
     },
     CELL_UNCOVER(state, cell_index) {
       state.squares[cell_index].classList.add('uncovered')
+    },
+    CLOSE_GAME_LOSS_MODAL(state) {
+      state.gameLossModalBool = false
     },
     CLOSE_GAME_WIN_MODAL(state) {
       state.gameWinModalBool = false
@@ -159,28 +163,23 @@ export default new Vuex.Store({
         await dispatch('gameLoss')
       }
     },
+    closeGameLossModal({ commit }) {
+      commit('CLOSE_GAME_LOSS_MODAL')
+    },
     closeGameWinModal({ commit }) {
       commit('CLOSE_GAME_WIN_MODAL')
     },
-    gameLoss({ commit, dispatch }) {
+    async gameLoss({ commit, dispatch, state }) {
       commit('END_TIMER')
       commit('DISABLE_GRID')
-      let level_box = document.getElementById('levelbox')
-      let game_over = document.createElement('h1')
-      game_over.innerText = "GAME OVER"
-      level_box.appendChild(game_over)
-      dispatch('revealGrid')
+      await dispatch('revealGrid')
+      state.gameLossModalBool = true
     },
     async gameWin({ commit, dispatch, state }) {
       commit('END_TIMER')
       commit('DISABLE_GRID')
       commit('ZERO_MINE_COUNTER')
-      let level_box = document.getElementById('levelbox')
-      let game_win = document.createElement('h1')
-      game_win.innerText = "YOU WON"
-      level_box.appendChild(game_win)
       await dispatch('revealGrid')
-      // $bvModal.show('game-win-modal')
       state.gameWinModalBool = true
     },
     getNeighborMinesRectangle({ state }, { cell_index }) {
