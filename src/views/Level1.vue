@@ -80,8 +80,9 @@ export default {
 .level1 div {
   height: 40px;
   width: 40px;
-  border: #000000 1px solid;
+  border: #7f7f7f 1px solid;
   margin: 0px;
   padding: 0px;
+  /* box-shadow: 2px 2px #888888; */
 }
 </style>

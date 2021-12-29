@@ -73,7 +73,7 @@ export default {
   height: 420px;
   flex-wrap: wrap;
   display: flex;
-  background-color: #999999;
+  background-color: #bdbdbd;
   border: #000000 10px solid;
   margin: 0 auto;
 }

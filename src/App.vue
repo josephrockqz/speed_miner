@@ -59,7 +59,7 @@ export default {
   color: #2c3e50;
 }
 .flag {
-  background-color: #bdbdbd;
+  background-color: #999999;
   background-image: url('assets/flag.png');
   background-size: 40px;
 }

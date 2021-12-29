@@ -27,15 +27,27 @@ export default new Vuex.Store({
   mutations: {
     CELL_MINE(state, cell_index) {
       state.squares[cell_index].classList.add('mine')
-      const icon = document.createElement("font-awesome-icon")
-      icon.setAttribute("icon", "bomb")
-      state.squares[cell_index].appendChild(icon)
-      console.log(state.squares[cell_index])
     },
     CELL_NUMBER(state, payload) {
       state.squares[payload.cell_index].innerText = payload.number
-      state.squares[payload.cell_index].style.color = 'black'
       state.squares[payload.cell_index].style.lineHeight = "40px"
+      if (payload.number == 1) {
+        state.squares[payload.cell_index].style.color = 'blue'
+      } else if (payload.number == 2) {
+        state.squares[payload.cell_index].style.color = 'green'
+      } else if (payload.number == 3) {
+        state.squares[payload.cell_index].style.color = 'red'
+      } else if (payload.number == 4) {
+        state.squares[payload.cell_index].style.color = 'purple'
+      } else if (payload.number == 5) {
+        state.squares[payload.cell_index].style.color = 'maroon'
+      } else if (payload.number == 6) {
+        state.squares[payload.cell_index].style.color = 'orange'
+      } else if (payload.number == 7) {
+        state.squares[payload.cell_index].style.color = 'brown'
+      } else if (payload.number == 8) {
+        state.squares[payload.cell_index].style.color = '#000000'
+      }
     },
     CELL_UNCOVER(state, cell_index) {
       state.squares[cell_index].classList.add('uncovered')

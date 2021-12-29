@@ -506,6 +506,8 @@ export default {
     submitScore() {
       // close modal
       store.dispatch('closeGameWinModal')
+      // reset name
+      this.name = ""
       // submit score to storage
 
     },
