@@ -10,11 +10,6 @@ import { mapActions } from 'vuex'
 import store from '../store.js'
 
 export default {
-  data() {
-    return {
-
-    }
-  },
   methods: {
     ...mapActions([
       'restartGame'

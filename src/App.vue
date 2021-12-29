@@ -9,16 +9,20 @@
            @click="goToHome" />
     </span>
     <router-view />
+    <GameWinModal/>
   </div>
 
 </template>
 
 <script>
+import GameWinModal from './components/GameWinModal.vue'
 import { mapState } from 'vuex'
 
 export default {
   name: 'App',
-  components: {},
+  components: {
+    GameWinModal
+  },
   computed: {
     ...mapState({
       backgroundColor: 'backgroundColor'

@@ -10,8 +10,8 @@
       <!--Game Grid-->
       <div v-for="cell in cells"
            :key="cell"
-           @click="$store.dispatch('checkCell', {cell_index: cell, level: 3})"
-           @click.right.prevent="$store.dispatch('placeFlag', {cell_index: cell, level: 3})"></div>
+           @click="$store.dispatch('checkCell', {cell_index: cell})"
+           @click.right.prevent="$store.dispatch('placeFlag', {cell_index: cell})"></div>
 
     </div>
 
@@ -40,6 +40,7 @@ export default {
   data() {
     return {
       height: 16,
+      level: 3,
       num_cells: 480,
       num_mines: 99,
       width: 30
@@ -47,13 +48,14 @@ export default {
   },
   methods: {
     ...mapActions([
-      'instantiateRectangleDimensions',
+      'instantiateRectangleLevel',
       'makeCells'
     ])
   },
   async mounted() {
-    await store.dispatch('instantiateRectangleDimensions', {
+    await store.dispatch('instantiateRectangleLevel', {
       height: this.height,
+      level: this.level,
       num_cells: this.num_cells,
       num_mines: this.num_mines,
       width: this.width

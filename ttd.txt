@@ -6,13 +6,11 @@
 - Make modal look better
     + react to night mode
 - Post scores in database
-    + after game win, modal for entering name
     + use MongoDB probably
     + display top scores for level somewhere on level view
+- Fix game win / game over duplication
 
 - Research ways to store information on users
-    + cookies
-        - ask to accept cookies
     + local storage
     + F12 Memory
 - Research how to help game for search engines

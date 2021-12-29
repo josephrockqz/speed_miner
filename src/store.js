@@ -9,7 +9,9 @@ export default new Vuex.Store({
     cells: [],
     disableGridBool: false,
     gameStartBool: false,
+    gameWinModalBool: false,
     height: 0,
+    level: 0,
     mineIndices: new Set(),
     numCells: 0,
     numMines: 0,
@@ -32,6 +34,9 @@ export default new Vuex.Store({
     },
     CELL_UNCOVER(state, cell_index) {
       state.squares[cell_index].classList.add('uncovered')
+    },
+    CLOSE_GAME_WIN_MODAL(state) {
+      state.gameWinModalBool = false
     },
     DECREMENT_MINE_COUNTER(state) {
       state.numMinesLeft--
@@ -60,8 +65,9 @@ export default new Vuex.Store({
     INCREMENT_MINE_COUNTER(state) {
       state.numMinesLeft++
     },
-    INSTATIATE_RECTANGLE_DIMENSIONS(state, dimensions) {
+    INSTATIATE_RECTANGLE_LEVEL(state, dimensions) {
       state.height = dimensions.height
+      state.level = dimensions.level
       state.numCells = dimensions.num_cells
       state.numMines = dimensions.num_mines
       state.numMinesLeft = dimensions.num_mines
@@ -110,15 +116,13 @@ export default new Vuex.Store({
     }
   },
   actions: {
-    async checkCell({ commit, dispatch, state }, { cell_index, level }) {
+    async checkCell({ commit, dispatch, state }, { cell_index }) {
       if (state.disableGridBool == true) {
         return
       }
       // get square divs if haven't already
       if (state.squaresBool == false) {
-        await dispatch('getSquares', {
-          level: level
-        })
+        await dispatch('getSquares')
         await dispatch('startGame')
       }
       // if this is first cell being clicked, place mines
@@ -151,14 +155,12 @@ export default new Vuex.Store({
       } 
       // mine is clicked
       else if (state.mineIndices.has(cell_index) && !state.squares[cell_index].classList.contains('flag')) {
-        // let image_element = new Image(40,40)
-        // image_element.src = "/src/assets/mine.png"
-        // image_element.setAttribute("height", "40");
-        // image_element.setAttribute("width", "40");
-        // this.squares[this.mineIndices[i]].appendChild(image_element)
         commit('CELL_MINE', cell_index)
         await dispatch('gameLoss')
       }
+    },
+    closeGameWinModal({ commit }) {
+      commit('CLOSE_GAME_WIN_MODAL')
     },
     gameLoss({ commit, dispatch }) {
       commit('END_TIMER')
@@ -169,7 +171,7 @@ export default new Vuex.Store({
       level_box.appendChild(game_over)
       dispatch('revealGrid')
     },
-    gameWin({ commit, dispatch }) {
+    async gameWin({ commit, dispatch, state }) {
       commit('END_TIMER')
       commit('DISABLE_GRID')
       commit('ZERO_MINE_COUNTER')
@@ -177,7 +179,9 @@ export default new Vuex.Store({
       let game_win = document.createElement('h1')
       game_win.innerText = "YOU WON"
       level_box.appendChild(game_win)
-      dispatch('revealGrid')
+      await dispatch('revealGrid')
+      // $bvModal.show('game-win-modal')
+      state.gameWinModalBool = true
     },
     getNeighborMinesRectangle({ state }, { cell_index }) {
       let numberOfNeighborMines = 0
@@ -215,13 +219,14 @@ export default new Vuex.Store({
       }
       return numberOfNeighborMines
     },
-    getSquares({ commit }, { level }) {
-      let squares = Array.from(document.querySelectorAll('.level' + level + ' div'))
+    getSquares({ commit, state }) {
+      let squares = Array.from(document.querySelectorAll('.level' + state.level + ' div'))
       commit('GET_SQUARES', squares)
     },
-    instantiateRectangleDimensions({ commit }, { height, num_cells, num_mines, width }) {
-      commit('INSTATIATE_RECTANGLE_DIMENSIONS', {
+    instantiateRectangleLevel({ commit }, { height, level, num_cells, num_mines, width }) {
+      commit('INSTATIATE_RECTANGLE_LEVEL', {
         height: height,
+        level: level,
         num_cells: num_cells,
         num_mines: num_mines,
         width: width
@@ -342,8 +347,8 @@ export default new Vuex.Store({
             cell_index: i
           })
         }
-        else if (state.mineIndices.has(i) && !state.squares[i].classList.contains('mine')) {
-          commit('CELL_MINE', i)
+        else if (state.mineIndices.has(i) && !state.squares[i].classList.contains('flag')) {
+          commit('FLAG_ADD', i)
         }
       }
     },
