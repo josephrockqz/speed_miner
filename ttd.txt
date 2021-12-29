@@ -7,9 +7,8 @@
     + display top scores for level somewhere on level view
 - Add ability to press number to uncover cells
     + add ability to controls
-- Make numers certain colors
-- Make covered cells look 3D
 
+- Make covered cells look 3D
 - Research ways to store information on users
     + local storage
 - Research how to help game for search engines

@@ -73,14 +73,14 @@ export default {
   height: 420px;
   flex-wrap: wrap;
   display: flex;
-  background-color: #bdbdbd;
+  background-color: #999999;
   border: #000000 10px solid;
   margin: 0 auto;
 }
 .level2 div {
   height: 40px;
   width: 40px;
-  border: #ffffff 1px solid;
+  border: #7f7f7f 1px solid;
   margin: 0px;
   padding: 0px;
 }

@@ -31,6 +31,7 @@ export default new Vuex.Store({
     CELL_NUMBER(state, payload) {
       state.squares[payload.cell_index].innerText = payload.number
       state.squares[payload.cell_index].style.lineHeight = "40px"
+      state.squares[payload.cell_index].style.fontSize = 'x-large'
       if (payload.number == 1) {
         state.squares[payload.cell_index].style.color = 'blue'
       } else if (payload.number == 2) {
