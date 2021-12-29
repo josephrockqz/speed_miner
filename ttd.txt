@@ -2,15 +2,12 @@
     + mine image
     + flag image
 - Make panel above game board look better
-    + replace smiley face with restart symbol
-    + replace H with home symbol
     + make numbers apperance better
 - Make home screen look better
     + Tabs for directions, controls, appearance
 - Post scores in database
     + use MongoDB probably
     + display top scores for level somewhere on level view
-- Fix game win / game over duplication
 - Add ability to press number to uncover cells
     + add ability to controls
 

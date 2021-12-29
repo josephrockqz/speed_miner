@@ -2,9 +2,9 @@
   <div>
     <div class="d-flex flex-row game-panel">
       <h2>{{ numMinesLeft }}</h2>
-      <b-button @click="$store.dispatch('restartGame')">:)</b-button>
+      <b-button @click="$store.dispatch('restartGame')"><font-awesome-icon icon="redo" /></b-button>
       <h2>{{ level }}</h2>
-      <b-button @click="openModal">H</b-button>
+      <b-button @click="openModal"><font-awesome-icon icon="home" /></b-button>
       <h2>{{ timeElapsed }}</h2>
     </div>
     <LeaveLevelModal/>
@@ -16,9 +16,6 @@ import LeaveLevelModal from './LeaveLevelModal.vue'
 import { mapState, mapActions } from 'vuex'
 
 export default {
-  data() {
-    return {}
-  },
   components: {
     LeaveLevelModal
   },
