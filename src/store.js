@@ -192,14 +192,14 @@ export default new Vuex.Store({
     async gameLoss({ commit, dispatch, state }) {
       commit('END_TIMER')
       commit('DISABLE_GRID')
-      await dispatch('revealGrid')
+      await dispatch('revealGridAfterLoss')
       state.gameLossModalBool = true
     },
     async gameWin({ commit, dispatch, state }) {
       commit('END_TIMER')
       commit('DISABLE_GRID')
       commit('ZERO_MINE_COUNTER')
-      await dispatch('revealGrid')
+      await dispatch('revealGridAfterWin')
       state.gameWinModalBool = true
     },
     getNeighborMinesRectangle({ state }, { cell_index }) {
@@ -356,18 +356,17 @@ export default new Vuex.Store({
         state.squares[i].innerText = ''
       }
     },
-    async revealGrid({ commit, dispatch, state }) {
+    async revealGridAfterLoss({ commit, state }) {
       for (let i = 0; i < state.numCells; i++) {
-        if (state.squares[i].classList.contains('flag')) {
-          continue
+        if (state.mineIndices.has(i) && !state.squares[i].classList.contains('flag')) {
+          commit('CELL_MINE', i)
         }
-        else if (!state.mineIndices.has(i) && !state.squares[i].classList.contains('uncovered')) {
-          await dispatch('uncoverCell', {
-            cell_index: i
-          })
-        }
-        else if (state.mineIndices.has(i) && !state.squares[i].classList.contains('flag')) {
-          commit('FLAG_ADD', i)
+      }
+    },
+    async revealGridAfterWin({ commit, state }) {
+      for (let i = 0; i < state.numCells; i++) {
+        if (state.mineIndices.has(i) && !state.squares[i].classList.contains('flag')) {
+          commit('CELL_MINE', i)
         }
       }
     },
