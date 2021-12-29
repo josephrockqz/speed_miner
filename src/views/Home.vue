@@ -11,6 +11,7 @@
       <ul>
         <li>Left click to reveal a cell</li>
         <li>Right click to place a flag to mark a mine</li>
+        <li>Middle click a number to reveal its adjacent squares</li>
       </ul>
     </div>
 

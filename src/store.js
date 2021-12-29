@@ -187,7 +187,7 @@ export default new Vuex.Store({
           await dispatch('gameWin')
         }
     },
-    async checkMiddleClick({ dispatch, state }, { cell_index }) {
+    checkMiddleClick({ dispatch, state }, { cell_index }) {
       // first, only continue if cell middle clicked is uncovered and has nearby mines
       if (!state.squares[cell_index].classList.contains('uncovered') || state.squares[cell_index].innerText == 0) {
         return
@@ -201,12 +201,12 @@ export default new Vuex.Store({
           // if any mines are stepped on ==> game loss
           dispatch('uncoverMiddleClick', {
             cell_index: cell_index
+          }).then(() => {
+            // fourth, check to see if game is won
+            dispatch('checkGameWon')
           })
         }
       })
-      // fourth, check to see if game is won
-      
-      await dispatch('checkGameWon')
     },
     closeGameLossModal({ commit }) {
       commit('CLOSE_GAME_LOSS_MODAL')
