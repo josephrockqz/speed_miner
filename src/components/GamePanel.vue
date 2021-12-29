@@ -14,6 +14,7 @@
 <script>
 import LeaveLevelModal from './LeaveLevelModal.vue'
 import { mapState, mapActions } from 'vuex'
+import store from '../store.js'
 
 export default {
   components: {
@@ -21,6 +22,7 @@ export default {
   },
   computed: {
     ...mapState({
+      gameStartBool: 'gameStartBool',
       numMinesLeft: 'numMinesLeft',
       squaresBool: 'squaresBool',
       timeElapsed: 'timeElapsed'
@@ -29,11 +31,12 @@ export default {
   methods: {
     openModal() {
       // if level has been started, show modal confirming to leave
-      // if game has not been started, go to home page
-      if (this.squaresBool == true) {
+      // if game has not been started or has been finished, go to home page
+      if (this.squaresBool == true && this.gameStartBool == true) {
         this.$bvModal.show('leave-level-modal')
       } else {
         this.$router.push('/')
+        store.dispatch('restartGame')
       }
     },
     ...mapActions([

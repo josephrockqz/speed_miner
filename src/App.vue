@@ -33,7 +33,6 @@ export default {
   },
   methods: {
     goToHome() {
-      console.log(this.$route.name)
       if (this.$route.name != 'Home') {
         this.$router.push('/')
       }

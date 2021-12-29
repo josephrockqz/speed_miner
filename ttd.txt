@@ -5,7 +5,6 @@
 - Post scores in database
     + use MongoDB probably
     + display top scores for level somewhere on level view
-- Don't ask for confirmation to leave level after losing
 
 - Make covered cells look 3D
 - Research ways to store information on users

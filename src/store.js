@@ -8,8 +8,8 @@ export default new Vuex.Store({
     backgroundColor: '#e9e9e9',
     cells: [],
     disableGridBool: false,
-    gameStartBool: false,
     gameLossModalBool: false,
+    gameStartBool: false,
     gameWinModalBool: false,
     height: 0,
     level: 0,
@@ -128,6 +128,9 @@ export default new Vuex.Store({
     SWITCH_GAME_START_BOOL_ON(state) {
       state.gameStartBool = true
     },
+    SWITCH_GAME_START_BOOL_OFF(state) {
+      state.gameStartBool = false
+    },
     TOGGLE_NIGHT_MODE(state, night_mode_bool) {
       if (night_mode_bool == false) {
         state.backgroundColor = '#e9e9e9'
@@ -217,12 +220,14 @@ export default new Vuex.Store({
     async gameLoss({ commit, dispatch, state }) {
       commit('END_TIMER')
       commit('DISABLE_GRID')
+      commit('SWITCH_GAME_START_BOOL_OFF')
       await dispatch('revealGridAfterLoss')
       state.gameLossModalBool = true
     },
     async gameWin({ commit, dispatch, state }) {
       commit('END_TIMER')
       commit('DISABLE_GRID')
+      commit('SWITCH_GAME_START_BOOL_OFF')
       commit('ZERO_MINE_COUNTER')
       await dispatch('revealGridAfterWin')
       state.gameWinModalBool = true
