@@ -1,7 +1,15 @@
 <template>
-    <b-modal @ok="leaveLevel" id="leave-level-modal">
-        <h2>Are you sure you want to leave this level?</h2>
-        <h4>Progress will not be saved</h4>
+    <b-modal
+      id="leave-level-modal"
+      title="Are you sure you want to leave this level?"
+      no-close-on-esc
+      no-close-on-backdrop
+      hide-footer
+    >
+      <h4>Progress will not be saved</h4>
+      <button @click.prevent="leaveLevel()" style="float: right;">
+        Yes
+      </button>
     </b-modal>
 </template>
 

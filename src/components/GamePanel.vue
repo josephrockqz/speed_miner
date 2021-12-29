@@ -49,7 +49,7 @@ export default {
 
 <style scoped>
 .game-panel {
-  height: 60px;
+  height: 40px;
   width: 400px;
   background-color: pink;
   justify-content: space-between;

@@ -1,7 +1,8 @@
 <template>
 
   <div id="nav" style="margin-top:15px;">
-
+    
+    Levels:
     <b-button v-for="level in levels"
               :key="level"
               @click="$router.push('/level' + level)"
