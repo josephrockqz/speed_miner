@@ -7,6 +7,9 @@
     + display top scores for level somewhere on level view
 - Add ability to press number to uncover cells
     + add ability to controls
+    + add ability to options potentially
+- Add mine-death css to functionality
+- Add indicator of incorrectly placed flag after loss
 
 - Make covered cells look 3D
 - Research ways to store information on users
@@ -14,3 +17,4 @@
 - Research how to help game for search engines
 - Add animation or something sudden when mine is pressed
     + can also add noise
+- Keep track of user's win percentage

@@ -28,6 +28,9 @@ export default new Vuex.Store({
     CELL_MINE(state, cell_index) {
       state.squares[cell_index].classList.add('mine')
     },
+    CELL_MINE_DEATH(state, cell_index) {
+      state.squares[cell_index].classList.add('mine-death')
+    },
     CELL_NUMBER(state, payload) {
       state.squares[payload.cell_index].innerText = payload.number
       state.squares[payload.cell_index].style.lineHeight = "40px"
@@ -176,7 +179,7 @@ export default new Vuex.Store({
       } 
       // mine is clicked
       else if (state.mineIndices.has(cell_index) && !state.squares[cell_index].classList.contains('flag')) {
-        commit('CELL_MINE', cell_index)
+        commit('CELL_MINE_DEATH', cell_index)
         await dispatch('gameLoss')
       }
     },
