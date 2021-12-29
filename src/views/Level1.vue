@@ -11,7 +11,10 @@
       <div v-for="cell in cells"
            :key="cell"
            @click="$store.dispatch('checkCell', {cell_index: cell})"
-           @click.right.prevent="$store.dispatch('placeFlag', {cell_index: cell})"></div>
+           @click.right.prevent="$store.dispatch('placeFlag', {cell_index: cell})"
+           @click.middle="$store.dispatch('uncoverNearbyCells', {cell_index: cell})"
+      >
+      </div>
 
     </div>
 

@@ -164,7 +164,17 @@ export default new Vuex.Store({
         await dispatch('uncoverCell', {
           cell_index: cell_index
         })
-        // check to see if uncovered cell is last cell to uncover
+        // see if game is won
+        await dispatch('checkGameWon')
+      } 
+      // mine is clicked
+      else if (state.mineIndices.has(cell_index) && !state.squares[cell_index].classList.contains('flag')) {
+        commit('CELL_MINE_DEATH', cell_index)
+        await dispatch('gameLoss')
+      }
+    },
+    async checkGameWon({ dispatch, state }) {
+      // check to see if uncovered cell is last cell to uncover
         // if so, trigger gameWin action
         // get exact time it took to clear board
         let game_win_bool = true
@@ -176,12 +186,6 @@ export default new Vuex.Store({
         if (game_win_bool == true) {
           await dispatch('gameWin')
         }
-      } 
-      // mine is clicked
-      else if (state.mineIndices.has(cell_index) && !state.squares[cell_index].classList.contains('flag')) {
-        commit('CELL_MINE_DEATH', cell_index)
-        await dispatch('gameLoss')
-      }
     },
     closeGameLossModal({ commit }) {
       commit('CLOSE_GAME_LOSS_MODAL')
@@ -238,6 +242,42 @@ export default new Vuex.Store({
       }
       return numberOfNeighborMines
     },
+    getNumberOfNeighborFlags({ state }, { cell_index }) {
+      let numberOfNeighborFlags = 0
+      // upper cell
+      if (cell_index - state.width >= 0 && state.squares[cell_index - state.width].classList.contains('flag')) {
+        numberOfNeighborFlags++
+      }
+      // lower cell
+      if (cell_index + state.width <= (state.height * state.width - 1) && state.squares[cell_index + state.width].classList.contains('flag')) {
+        numberOfNeighborFlags++
+      }
+      // left cell
+      if (cell_index % state.width != 0 && state.squares[cell_index - 1].classList.contains('flag')) {
+        numberOfNeighborFlags++
+      }
+      // right cell
+      if (cell_index % state.width != (state.width - 1) && state.squares[cell_index + 1].classList.contains('flag')) {
+        numberOfNeighborFlags++
+      }
+      // upper left cell
+      if (cell_index % state.width != 0 && cell_index - state.width >= 0 && state.squares[cell_index - state.width - 1].classList.contains('flag')) {
+        numberOfNeighborFlags++
+      }
+      // upper right cell
+      if (cell_index % state.width != (state.width - 1) && cell_index - state.width >= 0 && state.squares[cell_index - state.width + 1].classList.contains('flag')) {
+        numberOfNeighborFlags++
+      }
+      // lower left cell
+      if (cell_index % state.width != 0 && cell_index + state.width <= (state.height * state.width - 1) && state.squares[cell_index + state.width - 1].classList.contains('flag')) {
+        numberOfNeighborFlags++
+      }
+      // lower right cell
+      if (cell_index % state.width != (state.width - 1) && cell_index + state.width <= (state.height * state.width - 1) && state.squares[cell_index + state.width + 1].classList.contains('flag')) {
+        numberOfNeighborFlags++
+      }
+      return numberOfNeighborFlags
+    },
     getSquares({ commit, state }) {
       let squares = Array.from(document.querySelectorAll('.level' + state.level + ' div'))
       commit('GET_SQUARES', squares)
@@ -293,8 +333,10 @@ export default new Vuex.Store({
       }
     },
     recurseBlankCellsRectangle({ commit, dispatch, state }, { cell_index }) {
-      // first, uncover the cell
-      commit('CELL_UNCOVER', cell_index)
+      // first, uncover the cell if it needs to be
+      if (!state.squares[cell_index].classList.contains('uncovered')) {
+        commit('CELL_UNCOVER', cell_index)
+      }
 
       // upper cell
       if (cell_index - state.width >= 0 && !state.mineIndices.has(cell_index - state.width)) {
@@ -346,24 +388,26 @@ export default new Vuex.Store({
       }
     },
     restartGame({ commit, state }) {
-      commit('ENABLE_GRID')
-      commit('END_TIMER')
-      commit('RESET_MINES')
-      commit('RESET_TIME_ELPASED')
-      commit('RESET_MINE_COUNTER')
-      for (let i = 0; i < state.numCells; i++) {
-        state.squares[i].removeAttribute('class')
-        state.squares[i].innerText = ''
+      if (state.squaresBool == true) {
+        commit('ENABLE_GRID')
+        commit('END_TIMER')
+        commit('RESET_MINES')
+        commit('RESET_TIME_ELPASED')
+        commit('RESET_MINE_COUNTER')
+        for (let i = 0; i < state.numCells; i++) {
+          state.squares[i].removeAttribute('class')
+          state.squares[i].innerText = ''
+        }
       }
     },
-    async revealGridAfterLoss({ commit, state }) {
+    revealGridAfterLoss({ commit, state }) {
       for (let i = 0; i < state.numCells; i++) {
         if (state.mineIndices.has(i) && !state.squares[i].classList.contains('flag')) {
           commit('CELL_MINE', i)
         }
       }
     },
-    async revealGridAfterWin({ commit, state }) {
+    revealGridAfterWin({ commit, state }) {
       for (let i = 0; i < state.numCells; i++) {
         if (state.mineIndices.has(i) && !state.squares[i].classList.contains('flag')) {
           commit('CELL_MINE', i)
@@ -401,6 +445,27 @@ export default new Vuex.Store({
           })
         }
       })
+    },
+    async uncoverNearbyCells({ dispatch, state }, { cell_index }) {
+      // first, only continue if cell middle clicked is uncovered and has nearby mines
+      if (!state.squares[cell_index].classList.contains('uncovered') || state.squares[cell_index].innerText == 0) {
+        return
+      }
+      // second, only continue if there is the correct amount of flags nearby
+      dispatch('getNumberOfNeighborFlags', {
+        cell_index: cell_index
+      }).then(payload => {
+        if (payload == state.squares[cell_index].innerText) {
+          // third, reveal cells around middle click
+          dispatch('recurseBlankCellsRectangle', {
+            cell_index: cell_index
+          })
+        }
+      })
+      // fourth, check to see if any mines are stepped on, leading to game loss
+      // fifth, check to see if game is won
+      
+      await dispatch('checkGameWon')
     }
   },
   modules: {}
