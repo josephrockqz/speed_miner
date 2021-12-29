@@ -187,6 +187,27 @@ export default new Vuex.Store({
           await dispatch('gameWin')
         }
     },
+    async checkMiddleClick({ dispatch, state }, { cell_index }) {
+      // first, only continue if cell middle clicked is uncovered and has nearby mines
+      if (!state.squares[cell_index].classList.contains('uncovered') || state.squares[cell_index].innerText == 0) {
+        return
+      }
+      // second, only continue if there is the correct amount of flags nearby
+      dispatch('getNumberOfNeighborFlags', {
+        cell_index: cell_index
+      }).then(payload => {
+        if (payload == state.squares[cell_index].innerText) {
+          // third, reveal cells around middle click
+          // if any mines are stepped on ==> game loss
+          dispatch('uncoverMiddleClick', {
+            cell_index: cell_index
+          })
+        }
+      })
+      // fourth, check to see if game is won
+      
+      await dispatch('checkGameWon')
+    },
     closeGameLossModal({ commit }) {
       commit('CLOSE_GAME_LOSS_MODAL')
     },
@@ -452,26 +473,103 @@ export default new Vuex.Store({
         }
       })
     },
-    async uncoverNearbyCells({ dispatch, state }, { cell_index }) {
-      // first, only continue if cell middle clicked is uncovered and has nearby mines
-      if (!state.squares[cell_index].classList.contains('uncovered') || state.squares[cell_index].innerText == 0) {
-        return
-      }
-      // second, only continue if there is the correct amount of flags nearby
-      dispatch('getNumberOfNeighborFlags', {
-        cell_index: cell_index
-      }).then(payload => {
-        if (payload == state.squares[cell_index].innerText) {
-          // third, reveal cells around middle click
-          dispatch('recurseBlankCellsRectangle', {
-            cell_index: cell_index
+    uncoverMiddleClick({ commit, dispatch, state }, { cell_index }) {
+      // upper cell
+      if (cell_index - state.width >= 0) {
+        if (!state.mineIndices.has(cell_index - state.width)) {
+          dispatch('uncoverCell', {
+            cell_index: cell_index - state.width
           })
         }
-      })
-      // fourth, check to see if any mines are stepped on, leading to game loss
-      // fifth, check to see if game is won
-      
-      await dispatch('checkGameWon')
+        else if (state.mineIndices.has(cell_index - state.width) && !state.squares[cell_index - state.width].classList.contains('flag')) {
+          commit('CELL_MINE_DEATH', cell_index - state.width)
+          dispatch('gameLoss')
+        }
+      }
+      // lower cell
+      if (cell_index + state.width <= (state.height * state.width - 1)) {
+        if (!state.mineIndices.has(cell_index + state.width)) {
+          dispatch('uncoverCell', {
+            cell_index: cell_index + state.width
+          })
+        }
+        else if (state.mineIndices.has(cell_index + state.width) && !state.squares[cell_index + state.width].classList.contains('flag')) {
+          commit('CELL_MINE_DEATH', cell_index + state.width)
+          dispatch('gameLoss')
+        }
+      }
+      // left cell
+      if (cell_index % state.width != 0) {
+        if (!state.mineIndices.has(cell_index - 1)) {
+          dispatch('uncoverCell', {
+            cell_index: cell_index - 1
+          })
+        }
+        else if (state.mineIndices.has(cell_index - 1) && !state.squares[cell_index - 1].classList.contains('flag')) {
+          commit('CELL_MINE_DEATH', cell_index - 1)
+          dispatch('gameLoss')
+        }
+      }
+      // right cell
+      if (cell_index % state.width != (state.width - 1)) {
+        if (!state.mineIndices.has(cell_index + 1)) {
+          dispatch('uncoverCell', {
+            cell_index: cell_index + 1
+          })
+        }
+        else if (state.mineIndices.has(cell_index + 1) && !state.squares[cell_index + 1].classList.contains('flag')) {
+          commit('CELL_MINE_DEATH', cell_index + 1)
+          dispatch('gameLoss')
+        }
+      }
+      // upper left cell
+      if (cell_index % state.width != 0 && cell_index - state.width >= 0) {
+        if (!state.mineIndices.has(cell_index - state.width - 1)) {
+          dispatch('uncoverCell', {
+            cell_index: cell_index - state.width - 1
+          })
+        }
+        else if (state.mineIndices.has(cell_index - state.width - 1) && !state.squares[cell_index - state.width - 1].classList.contains('flag')) {
+          commit('CELL_MINE_DEATH', cell_index - state.width - 1)
+          dispatch('gameLoss')
+        }
+      }
+      // upper right cell
+      if (cell_index % state.width != (state.width - 1) && cell_index - state.width >= 0) {
+        if (!state.mineIndices.has(cell_index - state.width + 1)) {
+          dispatch('uncoverCell', {
+            cell_index: cell_index - state.width + 1
+          })
+        }
+        else if (state.mineIndices.has(cell_index - state.width + 1) && !state.squares[cell_index - state.width + 1].classList.contains('flag')) {
+          commit('CELL_MINE_DEATH', cell_index - state.width + 1)
+          dispatch('gameLoss')
+        }
+      }
+      // lower left cell
+      if (cell_index % state.width != 0 && cell_index + state.width <= (state.height * state.width - 1)) {
+        if (!state.mineIndices.has(cell_index + state.width - 1)) {
+          dispatch('uncoverCell', {
+            cell_index: cell_index + state.width - 1
+          })
+        }
+        else if (state.mineIndices.has(cell_index + state.width - 1) && !state.squares[cell_index + state.width - 1].classList.contains('flag')) {
+          commit('CELL_MINE_DEATH', cell_index + state.width - 1)
+          dispatch('gameLoss')
+        }
+      }
+      // lower right cell
+      if (cell_index % state.width != (state.width - 1) && cell_index + state.width <= (state.height * state.width - 1)) {
+        if (!state.mineIndices.has(cell_index + state.width + 1)) {
+          dispatch('uncoverCell', {
+            cell_index: cell_index + state.width + 1
+          })
+        }
+        else if (state.mineIndices.has(cell_index + state.width + 1) && !state.squares[cell_index + state.width + 1].classList.contains('flag')) {
+          commit('CELL_MINE_DEATH', cell_index + state.width + 1)
+          dispatch('gameLoss')
+        }
+      }
     }
   },
   modules: {}
