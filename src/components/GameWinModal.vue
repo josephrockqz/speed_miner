@@ -508,8 +508,6 @@ export default {
       store.dispatch('closeGameWinModal')
       // submit score to storage
 
-      // restart game
-      store.dispatch('restartGame')
     },
     ...mapActions([
       'closeGameWinModal',

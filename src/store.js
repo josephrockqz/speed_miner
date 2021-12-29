@@ -27,6 +27,10 @@ export default new Vuex.Store({
   mutations: {
     CELL_MINE(state, cell_index) {
       state.squares[cell_index].classList.add('mine')
+      const icon = document.createElement("font-awesome-icon")
+      icon.setAttribute("icon", "bomb")
+      state.squares[cell_index].appendChild(icon)
+      console.log(state.squares[cell_index])
     },
     CELL_NUMBER(state, payload) {
       state.squares[payload.cell_index].innerText = payload.number

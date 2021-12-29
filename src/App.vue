@@ -58,34 +58,26 @@ export default {
   text-align: center;
   color: #2c3e50;
 }
-#nav {
-  padding: 0px 0px 30px 0px;
-}
-.main-grid {
-  width: 420px;
-  height: 420px;
-  flex-wrap: wrap;
-  display: flex;
-  background-color: #999999;
-  border: #000000 10px solid;
-  margin: 0 auto;
-}
-.main-grid div {
-  height: 40px;
-  width: 40px;
-  border: #ffffff 1px solid;
-  margin: 0px;
-  padding: 0px;
-}
-.uncovered {
-  background-color: peachpuff;
+.flag {
+  background-color: #bdbdbd;
+  background-image: url('assets/flag.png');
+  background-size: 40px;
 }
 .mine {
-  background-color: yellowgreen;
-  /* background-image: url("./assets/mine.png"); */
-  /* height: 40px; */
+  background-color: #bdbdbd;
+  background-image: url('assets/mine.png');
+  background-position-x: 0.5px;
+  background-position-y: 0.5px;
+  background-size: 37px;
 }
-.flag {
-  background-color: orangered;
+.mine-death {
+  background-color: red;
+  background-image: url('assets/mine.png');
+  background-position-x: 0.5px;
+  background-position-y: 0.5px;
+  background-size: 37px;
+}
+.uncovered {
+  background-color: #bdbdbd;
 }
 </style>
