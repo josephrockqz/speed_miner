@@ -6,7 +6,6 @@
     + number of mines
     + dimension of grid
     + when hovering over level
-- make v-if statements for mine counter similar to time elapsed counter
 
 - Make covered cells look 3D
 - Research ways to store information on users

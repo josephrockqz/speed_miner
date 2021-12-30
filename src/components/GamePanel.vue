@@ -6,7 +6,8 @@
 
       <!-- Number of Mines Left -->
       <div style="height: 50px; margin: 2.5px; vertical-align: middle; background-color: black; color: red; width: 60px; text-align:">
-        <h2>0{{ numMinesLeft }}</h2>
+        <h2 v-if="numMinesLeft > 9">0{{ numMinesLeft }}</h2>
+        <h2 v-else>00{{ numMinesLeft }}</h2>
       </div>
 
       <!-- Restart Game Button -->
