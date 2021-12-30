@@ -1,6 +1,3 @@
-- moving speed_miner routes to posts works!!
-- now that I realize I had a typo, try to do the way with speed_miner in its own file
-
 - Post scores in database
     + create component that can be used on each level as well as home high score nav
     + display top scores for level under grid in level view
