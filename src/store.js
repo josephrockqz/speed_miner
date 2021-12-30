@@ -113,6 +113,9 @@ export default new Vuex.Store({
     RESET_TIME_ELPASED(state) {
       state.timeElapsed = 0
     },
+    SET_TIME_ELAPSED_MAX(state) {
+      state.timeElapsed = 999
+    },
     START_TIMER(state) {
       state.timer = window.setInterval(() => {
         let current_time = Date.now()
@@ -237,7 +240,7 @@ export default new Vuex.Store({
       commit('DISABLE_GRID')
       commit('SWITCH_GAME_START_BOOL_OFF')
       await dispatch('revealGridAfterLoss')
-      // state.gameLossModalBool = true
+      // state.gameLossModalBool = true // uncomment this to reinstantiate modal after game loss
     },
     async gameWin({ commit, dispatch, state }) {
       commit('END_TIMER')
@@ -464,6 +467,15 @@ export default new Vuex.Store({
     startGame({ commit }) {
       commit('SET_START_TIME')
       commit('START_TIMER')
+    },
+    timeExceeded({ commit, dispatch }) {
+      // ran out of time - game over
+      dispatch('gameLoss')
+      // create some sort of alert that you lost
+      // because time was exceeded
+      alert('You lost because maximum time of 999 seconds was exceeded')
+      // set timeElapsed to 999
+      commit('SET_TIME_ELAPSED_MAX')
     },
     toggleNightMode({ commit }, { night_mode_bool }) {
       commit('TOGGLE_NIGHT_MODE', night_mode_bool)

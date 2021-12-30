@@ -1,14 +1,46 @@
 <template>
+
   <div>
+
     <div class="d-flex flex-row game-panel">
-      <h2>{{ numMinesLeft }}</h2>
-      <b-button @click="$store.dispatch('restartGame')"><font-awesome-icon icon="redo" /></b-button>
-      <h2>{{ level }}</h2>
-      <b-button @click="openModal"><font-awesome-icon icon="home" /></b-button>
-      <h2>{{ timeElapsed }}</h2>
+
+      <!-- Number of Mines Left -->
+      <div style="height: 50px; margin: 2.5px; vertical-align: middle; background-color: black; color: red; width: 60px; text-align:">
+        <h2>0{{ numMinesLeft }}</h2>
+      </div>
+
+      <!-- Restart Game Button -->
+      <b-button @click="$store.dispatch('restartGame')"
+                squared
+                style="height: 50px; margin-top: 2.5px;"
+      ><font-awesome-icon icon="redo" />
+      </b-button>
+
+      <!-- Current Level Display -->
+      <div style="height: 50px; margin-top: 2.5px; vertical-align: middle; color: black; width: 40px; text-align:">
+        <h2>L{{ level }}</h2>
+      </div>
+
+      <!-- Home Button -->
+      <b-button @click="openModal"
+                squared
+                style="height: 50px; margin-top: 2.5px;"
+      ><font-awesome-icon icon="home" />
+      </b-button>
+
+      <!-- Time Elapsed -->
+      <div style="height: 50px; margin: 2.5px; vertical-align: middle; background-color: black; color: red; width: 60px; text-align:">
+        <h2 v-if="timeElapsed < 10">00{{ timeElapsed }}</h2>
+        <h2 v-else-if="timeElapsed >= 10 && timeElapsed < 100">0{{ timeElapsed }}</h2>
+        <h2 v-else>{{ timeElapsed }}</h2>
+      </div>
+
     </div>
+
     <LeaveLevelModal/>
+
   </div>
+
 </template>
 
 <script>
@@ -40,21 +72,36 @@ export default {
       }
     },
     ...mapActions([
-      'restartGame'
+      'restartGame',
+      'timeExceeded'
     ])
   },
-  props: ['level']
+  props: ['level'],
+  watch: {
+    timeElapsed() {
+      if (this.timeElapsed > 999) {
+        store.dispatch('timeExceeded')
+      }
+    }
+  }
 }
 </script>
 
 <style scoped>
 .game-panel {
-  height: 40px;
+  height: 61px;
   width: 400px;
-  background-color: pink;
+  background-color: #bdbdbd;
   justify-content: space-between;
   margin: auto;
   margin-bottom: 10px;
   border: black 3px solid;
+}
+</style>
+
+<style>
+h2 {
+  margin-top: 6px !important;
+  margin-bottom: 0px !important;
 }
 </style>
