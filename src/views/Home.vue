@@ -111,7 +111,13 @@ export default {
   computed: {
     ...mapState({
       backgroundColor: 'backgroundColor',
-      nightModeBool: 'nightModeBool'
+      nightModeBool: 'nightModeBool',
+      times: 'times'
+    })
+  },
+  created() {
+    store.dispatch('getScoresMongo').then(() => {
+      console.log(this.times)
     })
   },
   data() {
@@ -125,6 +131,7 @@ export default {
   },
   methods: {
     ...mapActions([
+      'getScoresMongo',
       'toggleNightMode',
       'toggleZoom'
     ])

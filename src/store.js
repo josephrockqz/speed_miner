@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import EventServiceMongo from './services/EventServiceMongo'
 
 Vue.use(Vuex)
 
@@ -11,6 +12,7 @@ export default new Vuex.Store({
     gameLossModalBool: false,
     gameStartBool: false,
     gameWinModalBool: false,
+    errors: [],
     height: 0,
     level: 0,
     mineIndices: new Set(),
@@ -23,9 +25,13 @@ export default new Vuex.Store({
     startTime: null,
     timeElapsed: 0,
     timer: null,
+    times: [],
     width: 0
   },
   mutations: {
+    ADD_ERROR(state, error) {
+      state.errors.push(error)
+    },
     CELL_MINE(state, cell_index) {
       state.squares[cell_index].classList.add('mine')
     },
@@ -112,6 +118,9 @@ export default new Vuex.Store({
     },
     RESET_TIME_ELPASED(state) {
       state.timeElapsed = 0
+    },
+    SET_SCORES(state, data) {
+      state.times = data
     },
     SET_TIME_ELAPSED_MAX(state) {
       state.timeElapsed = 999
@@ -375,6 +384,20 @@ export default new Vuex.Store({
           i++
         }
       }
+    },
+    getScoresMongo({ commit }) {
+      return EventServiceMongo.getScores()
+        .then(response => {
+          commit('SET_SCORES', response)
+        })
+        .catch(error => {
+          commit('ADD_ERROR', error)
+        })
+    },
+    postScoreMongo({ commit }, { level, name, time }) {
+      EventServiceMongo.insertScore(level, name, time).catch(error => {
+        commit('ADD_ERROR', error)
+      })
     },
     recurseBlankCellsRectangle({ commit, dispatch, state }, { cell_index }) {
       // first, uncover the cell if it needs to be

@@ -1,5 +1,9 @@
 # speed_miner
 
+### !!!!!!!!
+### the backend for this application is part of the blue2red_backend application
+### !!!!!!!!
+
 ## Project setup
 ```
 npm install
