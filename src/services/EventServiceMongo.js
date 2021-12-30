@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const url = 'https://node.joerock.dev/api/speed_miner'
+const url = 'https://node.joerock.dev/api/posts/speed_miner'
 
 class EventServiceMongo {
   
@@ -9,6 +9,7 @@ class EventServiceMongo {
     // eslint-disable-next-line no-async-promise-executor
     return new Promise(async (resolve, reject) => {
       try {
+        // const res = await axios.get("https://node.joerock.dev/api/posts")
         const res = await axios.get(url)
         const data = res.data
         resolve(

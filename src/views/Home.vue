@@ -41,8 +41,8 @@
 
         </b-tab>
 
-        <!-- High Scores Tab -->
-        <b-tab title="High Scores">
+        <!-- Statistics Tab -->
+        <b-tab title="Statistics">
           
         </b-tab>
 
@@ -86,9 +86,57 @@
 
         </b-tab>
 
-        <!-- High Scores Tab -->
-        <b-tab title="High Scores" title-link-class="bg-secondary">
+        <!-- Statistics Tab -->
+        <b-tab title="Statistics" title-link-class="bg-secondary">
           
+        </b-tab>
+
+      </b-tabs>
+
+    </b-card>
+
+    <!-- High Scores Tabs Light Mode -->
+    <b-card title="High Scores" no-body v-show="nightModeBool == false" style="margin-top: 20px;">
+
+      <b-tabs card justified>
+
+        <!-- Beginner High Scores -->
+        <b-tab no-body active title="Beginner">
+          
+        </b-tab>
+
+        <!-- Intermediate High Scores -->
+        <b-tab no-body title="Intermediate">
+          
+        </b-tab>
+
+        <!-- Advanced High Scores -->
+        <b-tab no-body title="Advanced">
+
+        </b-tab>
+
+      </b-tabs>
+
+    </b-card>
+
+    <!-- High Scores Tabs Night Mode -->
+    <b-card no-body bg-variant="secondary" v-show="nightModeBool == true" style="margin-top: 20px;">
+
+      <b-tabs card justified>
+
+        <!-- Beginner High Scores -->
+        <b-tab no-body active title="Beginner" title-link-class="bg-secondary">
+          
+        </b-tab>
+
+        <!-- Intermediate High Scores -->
+        <b-tab no-body title="Intermediate" title-link-class="bg-secondary">
+          
+        </b-tab>
+
+        <!-- Advanced High Scores -->
+        <b-tab no-body title="Advanced" title-link-class="bg-secondary">
+
         </b-tab>
 
       </b-tabs>
@@ -115,10 +163,10 @@ export default {
       times: 'times'
     })
   },
-  created() {
-    store.dispatch('getScoresMongo').then(() => {
-      console.log(this.times)
-    })
+  async created() {
+    let i = store.dispatch('getScoresMongo')
+    await i
+    console.log(this.times)
   },
   data() {
     return {

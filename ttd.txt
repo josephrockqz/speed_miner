@@ -1,9 +1,10 @@
+- moving speed_miner routes to posts works!!
+- now that I realize I had a typo, try to do the way with speed_miner in its own file
+
 - Post scores in database
-    + set up MongoDB database
-    + display top scores for level somewhere on level view
-    + display all top scores on home page high scores tab
-    + create component that can be used on each level
-    + update blue2red_endpoints
+    + create component that can be used on each level as well as home high score nav
+    + display top scores for level under grid in level view
+    + display all top scores on home page in nav under main nav
 
 - Research how to help game for search engines
 - Keep track of user's win percentage
@@ -11,7 +12,7 @@
     + keep variable for total number of games
     + keep variable for ongoing average
     + whenever new game is submitted, retrieve values, calculate/store new values
-    + make another tab for displaying personal statistics
+    + make tab for displaying personal statistics
 
 - Deploy game to website
     + do all the necessary steps

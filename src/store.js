@@ -331,6 +331,15 @@ export default new Vuex.Store({
       }
       return numberOfNeighborFlags
     },
+    getScoresMongo({ commit }) {
+      return EventServiceMongo.getScores()
+        .then(response => {
+          commit('SET_SCORES', response)
+        })
+        .catch(error => {
+          commit('ADD_ERROR', error)
+        })
+    },
     getSquares({ commit, state }) {
       let squares = Array.from(document.querySelectorAll('.level' + state.level + ' div'))
       commit('GET_SQUARES', squares)
@@ -384,15 +393,6 @@ export default new Vuex.Store({
           i++
         }
       }
-    },
-    getScoresMongo({ commit }) {
-      return EventServiceMongo.getScores()
-        .then(response => {
-          commit('SET_SCORES', response)
-        })
-        .catch(error => {
-          commit('ADD_ERROR', error)
-        })
     },
     postScoreMongo({ commit }, { level, name, time }) {
       EventServiceMongo.insertScore(level, name, time).catch(error => {

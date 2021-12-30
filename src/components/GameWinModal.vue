@@ -506,13 +506,13 @@ export default {
     submitScore() {
       // close modal
       store.dispatch('closeGameWinModal')
-      // reset name
-      this.name = ""
       // submit score to storage
       store.dispatch('postScoreMongo', {
         level: this.level,
         name: this.name,
         time: this.timeElapsed
+      }).then(() => {
+        this.name = ''
       })
     },
     ...mapActions([
