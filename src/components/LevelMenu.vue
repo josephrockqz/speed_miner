@@ -1,8 +1,8 @@
 <template>
 
-  <div id="nav" style="margin-top:15px;">
+  <div id="nav" style="margin-top:15px; margin-bottom: 15px;">
     
-    Levels:
+    <div style="font-size: 32px;">CHOOSE A LEVEL</div>
     <b-button v-for="level in levels"
               :key="level"
               @click="$router.push('/level' + level)"

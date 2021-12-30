@@ -140,6 +140,19 @@ export default new Vuex.Store({
         state.backgroundColor = '#555555'
       }
     },
+    TOGGLE_ZOOM(state, zoom_level) {
+      if (zoom_level == 1) {
+        document.body.style.zoom = "50%"
+      } else if (zoom_level == 2) {
+        document.body.style.zoom = "75%"
+      } else if (zoom_level == 3) {
+        document.body.style.zoom = "100%"
+      } else if (zoom_level == 4) {
+        document.body.style.zoom = "150%"
+      } else if (zoom_level == 5) {
+        document.body.style.zoom = "200%"
+      } 
+    },
     ZERO_MINE_COUNTER(state) {
       state.numMinesLeft = 0
     }
@@ -454,6 +467,9 @@ export default new Vuex.Store({
     },
     toggleNightMode({ commit }, { night_mode_bool }) {
       commit('TOGGLE_NIGHT_MODE', night_mode_bool)
+    },
+    toggleZoom({ commit }, { zoom_level }) {
+      commit('TOGGLE_ZOOM', zoom_level)
     },
     uncoverCell({ commit, dispatch, state }, { cell_index }) {
       if (state.squares[cell_index].classList.contains('uncovered') || state.squares[cell_index].classList.contains('flag') || state.squares[cell_index].classList.contains('mine')) {

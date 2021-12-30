@@ -29,6 +29,15 @@
 
           <!-- Night Mode Checkbox -->
           <b-checkbox v-model="nightMode" style="text-align: left;">&nbsp;Night Mode</b-checkbox>
+          
+          <!-- Zoom Level -->
+          <b-form-group style="text-align: left; margin-top: 5px;">
+            <b-form-radio v-model="zoomLevel" name="some-radios" value="1">&nbsp;50% Zoom</b-form-radio>
+            <b-form-radio v-model="zoomLevel" name="some-radios" value="2">&nbsp;75% Zoom</b-form-radio>
+            <b-form-radio v-model="zoomLevel" name="some-radios" value="3">&nbsp;100% Zoom</b-form-radio>
+            <b-form-radio v-model="zoomLevel" name="some-radios" value="4">&nbsp;150% Zoom</b-form-radio>
+            <b-form-radio v-model="zoomLevel" name="some-radios" value="5">&nbsp;200% Zoom</b-form-radio>
+          </b-form-group>
 
         </b-tab>
 
@@ -101,12 +110,14 @@ export default {
       nightMode: false,
       options: [
         { item: 'Night Mode', name: 'Night Mode' }
-      ]
+      ],
+      zoomLevel: 3
     }
   },
   methods: {
     ...mapActions([
-      'toggleNightMode'
+      'toggleNightMode',
+      'toggleZoom'
     ])
   },
   mounted() {
@@ -121,6 +132,11 @@ export default {
       await store.dispatch('toggleNightMode', {
         night_mode_bool: this.nightMode
       })
+    },
+    async zoomLevel() {
+      await store.dispatch('toggleZoom', {
+        zoom_level: this.zoomLevel
+      })
     }
   }
 }
@@ -132,6 +148,10 @@ a {
 }
 a:hover {
   border: none !important;
+}
+div.card-header {
+  border: none !important;
+  padding: none !important;
 }
 .nav-link {
   color: black !important;

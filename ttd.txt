@@ -1,7 +1,6 @@
 - Make panel above game board look better
     + make numbers apperance better
 - Make home screen look better
-    + add zooming feature to display
 - Post scores in database
     + use MongoDB probably
     + display top scores for level somewhere on level view
