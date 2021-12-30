@@ -4,11 +4,17 @@
     + display all top scores on home page high scores tab
     + create component that can be used on each level
 
-- Research ways to store information on users
-    + local storage
 - Research how to help game for search engines
 - Keep track of user's win percentage
     + use localStorage
     + keep variable for total number of games
     + keep variable for ongoing average
     + whenever new game is submitted, retrieve values, calculate/store new values
+    + make another tab for displaying personal statistics
+
+- Deploy game to website
+    + do all the necessary steps
+        - add endpoint to cloudflare
+        - EC2 git pull
+        - nginx configuration
+    + add link to website
