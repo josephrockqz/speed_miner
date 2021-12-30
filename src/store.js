@@ -14,6 +14,7 @@ export default new Vuex.Store({
     height: 0,
     level: 0,
     mineIndices: new Set(),
+    nightModeBool: false,
     numCells: 0,
     numMines: 0,
     numMinesLeft: 0,
@@ -132,6 +133,7 @@ export default new Vuex.Store({
       state.gameStartBool = false
     },
     TOGGLE_NIGHT_MODE(state, night_mode_bool) {
+      state.nightModeBool = night_mode_bool
       if (night_mode_bool == false) {
         state.backgroundColor = '#e9e9e9'
       } else {
