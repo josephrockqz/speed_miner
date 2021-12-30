@@ -75,6 +75,15 @@
           <!-- Night Mode Checkbox -->
           <b-checkbox v-model="nightMode" style="text-align: left;">&nbsp;Night Mode</b-checkbox>
 
+          <!-- Zoom Level -->
+          <b-form-group style="text-align: left; margin-top: 5px;">
+            <b-form-radio v-model="zoomLevel" value="1">&nbsp;50% Zoom</b-form-radio>
+            <b-form-radio v-model="zoomLevel" value="2">&nbsp;75% Zoom</b-form-radio>
+            <b-form-radio v-model="zoomLevel" value="3">&nbsp;100% Zoom</b-form-radio>
+            <b-form-radio v-model="zoomLevel" value="4">&nbsp;150% Zoom</b-form-radio>
+            <b-form-radio v-model="zoomLevel" value="5">&nbsp;200% Zoom</b-form-radio>
+          </b-form-group>
+
         </b-tab>
 
         <!-- High Scores Tab -->
