@@ -1,13 +1,9 @@
 - Post scores in database
     + use MongoDB probably
     + display top scores for level somewhere on level view
+    + display all top scores on home page high scores tab
     + create component that can be used on each level
-- Add details about levels
-    + number of mines
-    + dimension of grid
-    + when hovering over level
 
-- Make covered cells look 3D
 - Research ways to store information on users
     + local storage
 - Research how to help game for search engines
