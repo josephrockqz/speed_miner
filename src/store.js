@@ -232,12 +232,12 @@ export default new Vuex.Store({
     closeGameWinModal({ commit }) {
       commit('CLOSE_GAME_WIN_MODAL')
     },
-    async gameLoss({ commit, dispatch, state }) {
+    async gameLoss({ commit, dispatch }) {
       commit('END_TIMER')
       commit('DISABLE_GRID')
       commit('SWITCH_GAME_START_BOOL_OFF')
       await dispatch('revealGridAfterLoss')
-      state.gameLossModalBool = true
+      // state.gameLossModalBool = true
     },
     async gameWin({ commit, dispatch, state }) {
       commit('END_TIMER')

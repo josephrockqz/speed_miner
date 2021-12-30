@@ -3,6 +3,8 @@
   <div id="nav" style="margin-top:15px; margin-bottom: 15px;">
     
     <div style="font-size: 32px;">CHOOSE A LEVEL</div>
+    <div>(hover over levels to see specifications)</div>
+
     <b-button v-for="level in levels"
               :key="level"
               @click="$router.push('/level' + level)"

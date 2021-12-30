@@ -1,6 +1,5 @@
 - Make panel above game board look better
     + make numbers apperance better
-- Make home screen look better
 - Post scores in database
     + use MongoDB probably
     + display top scores for level somewhere on level view
@@ -8,8 +7,7 @@
 - Add details about levels
     + number of mines
     + dimension of grid
-- Try to make cells look 3D
-    + if accomplished, make all cell classes the same color
+    + when hovering over level
 
 - Make covered cells look 3D
 - Research ways to store information on users
