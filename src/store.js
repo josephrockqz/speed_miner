@@ -243,7 +243,7 @@ export default new Vuex.Store({
     },
     checkMiddleClick({ dispatch, state }, { cell_index, level }) {
       // first, only continue if cell middle clicked is uncovered and has nearby mines
-      if (!state.squares[cell_index].classList.contains('uncovered') || state.squares[cell_index].innerText == 0) {
+      if (state.squaresBool == false || !state.squares[cell_index].classList.contains('uncovered') || state.squares[cell_index].innerText == 0) {
         return
       }
       // second, only continue if there is the correct amount of flags nearby
