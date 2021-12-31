@@ -433,7 +433,7 @@ export default new Vuex.Store({
       commit('MAKE_CELLS', cells)
     },
     placeFlag({ commit, state }, { cell_index }) {
-      if (state.disableGridBool == true) {
+      if (state.disableGridBool == true || state.squaresBool == false) {
         return
       }
       // don't place flag if cell is uncovered
