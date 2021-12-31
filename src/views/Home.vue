@@ -112,7 +112,7 @@
 
           <!-- next page button -->
           <b-button
-            :disabled="currentPageBeginner * perPage >= times.length"
+            :disabled="currentPageBeginner * perPage >= beginnerTimes.length"
             @click="currentPageBeginner++"
             style="margin: 4px;"
             >Next</b-button
@@ -142,7 +142,7 @@
 
           <!-- next page button -->
           <b-button
-            :disabled="currentPageIntermediate * perPage >= times.length"
+            :disabled="currentPageIntermediate * perPage >= intermediateTimes.length"
             @click="currentPageIntermediate++"
             style="margin: 4px;"
             >Next</b-button
@@ -172,7 +172,7 @@
 
           <!-- next page button -->
           <b-button
-            :disabled="currentPageAdvanced * perPage >= times.length"
+            :disabled="currentPageAdvanced * perPage >= advancedTimes.length"
             @click="currentPageAdvanced++"
             style="margin: 4px;"
             >Next</b-button
@@ -212,7 +212,7 @@
 
           <!-- next page button -->
           <b-button
-            :disabled="currentPageBeginner * perPage >= times.length"
+            :disabled="currentPageBeginner * perPage >= beginnerTimes.length"
             @click="currentPageBeginner++"
             style="margin: 4px;"
             variant="light"
@@ -244,7 +244,7 @@
 
           <!-- next page button -->
           <b-button
-            :disabled="currentPageIntermediate * perPage >= times.length"
+            :disabled="currentPageIntermediate * perPage >= intermediateTimes.length"
             @click="currentPageIntermediate++"
             style="margin: 4px;"
             variant="light"
@@ -276,7 +276,7 @@
 
           <!-- next page button -->
           <b-button
-            :disabled="currentPageAdvanced * perPage >= times.length"
+            :disabled="currentPageAdvanced * perPage >= advancedTimes.length"
             @click="currentPageAdvanced++"
             style="margin: 4px;"
             variant="light"
