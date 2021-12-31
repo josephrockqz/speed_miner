@@ -362,6 +362,8 @@ export default {
     })
   },
   async created() {
+    document.body.style.zoom = "100%"
+    store.dispatch('restartGame')
     store.dispatch('getUserStatistics').then(() => {
       this.calculateUserStatisticAverages()
     })
@@ -435,6 +437,7 @@ export default {
     },
     ...mapActions([
       'getScoresMongo',
+      'restartGame',
       'toggleNightMode',
       'toggleZoom'
     ])

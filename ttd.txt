@@ -1,11 +1,12 @@
 - fix bug where going back messes up game
     + on back, initiate 'restartGame' action
+- test things on another device
 
 - Try to break the game
     + use middle click
     + mess with home screen
     + retry games
-    + referesh pages a bunch
+    + refresh pages a bunch
     + do things in dark mode
 - Deploy game to website
     + do all the necessary steps
