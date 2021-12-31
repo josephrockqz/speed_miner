@@ -25,24 +25,28 @@
         </b-tab>
 
         <!-- Display Tab -->
-        <b-tab title="Display">
+        <b-tab title="Display" align="center">
 
-          <!-- Night Mode Checkbox -->
-          <b-checkbox v-model="nightMode" style="text-align: left;">&nbsp;Night Mode</b-checkbox>
-          
-          <!-- Zoom Level -->
-          <b-form-group style="text-align: left; margin-top: 5px;">
-            <b-form-radio v-model="zoomLevel" name="some-radios" value="1">&nbsp;50% Zoom</b-form-radio>
-            <b-form-radio v-model="zoomLevel" name="some-radios" value="2">&nbsp;75% Zoom</b-form-radio>
-            <b-form-radio v-model="zoomLevel" name="some-radios" value="3">&nbsp;100% Zoom</b-form-radio>
-            <b-form-radio v-model="zoomLevel" name="some-radios" value="4">&nbsp;150% Zoom</b-form-radio>
-            <b-form-radio v-model="zoomLevel" name="some-radios" value="5">&nbsp;200% Zoom</b-form-radio>
-          </b-form-group>
+          <div>
+
+            <!-- Night Mode Checkbox -->
+            <b-checkbox v-model="nightMode" style="text-align: left;">&nbsp;Night Mode</b-checkbox>
+
+            <!-- Zoom Level -->
+            <b-form-group style="text-align: left; margin-top: 5px;">
+              <b-form-radio v-model="zoomLevel" value="1">&nbsp;50% Zoom</b-form-radio>
+              <b-form-radio v-model="zoomLevel" value="2">&nbsp;75% Zoom</b-form-radio>
+              <b-form-radio v-model="zoomLevel" value="3">&nbsp;100% Zoom</b-form-radio>
+              <b-form-radio v-model="zoomLevel" value="4">&nbsp;150% Zoom</b-form-radio>
+              <b-form-radio v-model="zoomLevel" value="5">&nbsp;200% Zoom</b-form-radio>
+            </b-form-group>
+
+          </div>
 
         </b-tab>
 
         <!-- Statistics Tab -->
-        <b-tab title="Statistics">
+        <b-tab title="Statistics" align="center">
 
           <div style="width: 400px;">
             <!-- Beginner Statistics -->
@@ -71,7 +75,7 @@
       <b-tabs card justified>
 
         <!-- Controls Tab -->
-        <b-tab title="Controls" active title-link-class="bg-secondary" no-body>
+        <b-tab title="Controls" title-link-class="bg-secondary" no-body>
 
           <ul style="text-align: left;">
 
@@ -85,25 +89,42 @@
         </b-tab>
 
         <!-- Display Tab -->
-        <b-tab title="Display" title-link-class="bg-secondary">
+        <b-tab title="Display" active title-link-class="bg-secondary" align="center">
 
-          <!-- Night Mode Checkbox -->
-          <b-checkbox v-model="nightMode" style="text-align: left;">&nbsp;Night Mode</b-checkbox>
+          <div>
 
-          <!-- Zoom Level -->
-          <b-form-group style="text-align: left; margin-top: 5px;">
-            <b-form-radio v-model="zoomLevel" value="1">&nbsp;50% Zoom</b-form-radio>
-            <b-form-radio v-model="zoomLevel" value="2">&nbsp;75% Zoom</b-form-radio>
-            <b-form-radio v-model="zoomLevel" value="3">&nbsp;100% Zoom</b-form-radio>
-            <b-form-radio v-model="zoomLevel" value="4">&nbsp;150% Zoom</b-form-radio>
-            <b-form-radio v-model="zoomLevel" value="5">&nbsp;200% Zoom</b-form-radio>
-          </b-form-group>
+            <!-- Night Mode Checkbox -->
+            <b-checkbox v-model="nightMode" style="text-align: left;">&nbsp;Night Mode</b-checkbox>
+
+            <!-- Zoom Level -->
+            <b-form-group style="text-align: left; margin-top: 5px;">
+              <b-form-radio v-model="zoomLevel" value="1">&nbsp;50% Zoom</b-form-radio>
+              <b-form-radio v-model="zoomLevel" value="2">&nbsp;75% Zoom</b-form-radio>
+              <b-form-radio v-model="zoomLevel" value="3">&nbsp;100% Zoom</b-form-radio>
+              <b-form-radio v-model="zoomLevel" value="4">&nbsp;150% Zoom</b-form-radio>
+              <b-form-radio v-model="zoomLevel" value="5">&nbsp;200% Zoom</b-form-radio>
+            </b-form-group>
+
+          </div>
 
         </b-tab>
 
         <!-- Statistics Tab -->
-        <b-tab title="Statistics" title-link-class="bg-secondary">
-          
+        <b-tab title="Statistics" title-link-class="bg-secondary" align="center">
+          <div style="width: 400px;">
+            <!-- Beginner Statistics -->
+            <div class="d-flex flex-row" style="justify-content: space-between;"><span>Beginner Games Won:</span><span>{{ beginnerGamesWon }}</span></div>
+            <div class="d-flex flex-row" style="justify-content: space-between;"><span>Beginner Games Played:</span><span>{{ beginnerGamesPlayed }}</span></div>
+            <div class="d-flex flex-row" style="justify-content: space-between;"><span>Beginner Win Percentage:</span><span>{{ beginnerAverage }}%</span></div>
+            <!-- Intermediate Statistics -->
+            <div class="d-flex flex-row" style="justify-content: space-between;"><span>Intermediate Games Won:</span><span>{{ intermediateGamesWon }}</span></div>
+            <div class="d-flex flex-row" style="justify-content: space-between;"><span>Intermediate Games Played:</span><span>{{ intermediateGamesPlayed }}</span></div>
+            <div class="d-flex flex-row" style="justify-content: space-between;"><span>Intermediate Win Percentage:</span><span>{{ intermediateAverage }}%</span></div>
+            <!-- Advanced Statistics -->
+            <div class="d-flex flex-row" style="justify-content: space-between;"><span>Advanced Games Won:</span><span>{{ advancedGamesWon }}</span></div>
+            <div class="d-flex flex-row" style="justify-content: space-between;"><span>Advanced Games Played:</span><span>{{ advancedGamesPlayed }}</span></div>
+            <div class="d-flex flex-row" style="justify-content: space-between;"><span>Advanced Win Percentage:</span><span>{{ advancedAverage }}%</span></div>
+          </div>
         </b-tab>
 
       </b-tabs>

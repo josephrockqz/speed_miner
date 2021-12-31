@@ -1,15 +1,12 @@
-- Keep track of user's win percentage
-    + use localStorage
-    + keep variable for total number of games
-    + keep variable for ongoing average
-    + whenever new game is submitted, retrieve values, calculate/store new values
-    + make tab for displaying personal statistics
+- fix bug where going back messes up game
+    + on back, initiate 'restartGame' action
 
 - Try to break the game
     + use middle click
     + mess with home screen
     + retry games
     + referesh pages a bunch
+    + do things in dark mode
 - Deploy game to website
     + do all the necessary steps
         - add endpoint to cloudflare
