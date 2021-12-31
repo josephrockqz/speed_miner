@@ -96,23 +96,98 @@
     </b-card>
 
     <!-- High Scores Tabs Light Mode -->
-    <b-card title="High Scores" no-body v-show="nightModeBool == false" style="margin-top: 20px;">
+    <b-card title="High Scores" no-body v-show="nightModeBool == false" style="margin-top: 20px; margin-bottom: 20px;">
 
       <b-tabs card justified>
 
         <!-- Beginner High Scores -->
         <b-tab no-body active title="Beginner">
-          
+          <!-- previous page button -->
+          <b-button
+            :disabled="currentPageBeginner < 2"
+            @click="currentPageBeginner--"
+            style="margin: 4px;"
+            >Prev</b-button
+          >
+
+          <!-- next page button -->
+          <b-button
+            :disabled="currentPageBeginner * perPage >= times.length"
+            @click="currentPageBeginner++"
+            style="margin: 4px;"
+            >Next</b-button
+          >
+
+          <!-- table -->
+          <b-table
+            :items="beginnerTimes"
+            :fields="fields"
+            small
+            fixed
+            responsive="sm"
+            :perPage="perPage"
+            :currentPage="currentPageBeginner"
+          ></b-table>
         </b-tab>
 
         <!-- Intermediate High Scores -->
         <b-tab no-body title="Intermediate">
-          
+          <!-- previous page button -->
+          <b-button
+            :disabled="currentPageIntermediate < 2"
+            @click="currentPageIntermediate--"
+            style="margin: 4px;"
+            >Prev</b-button
+          >
+
+          <!-- next page button -->
+          <b-button
+            :disabled="currentPageIntermediate * perPage >= times.length"
+            @click="currentPageIntermediate++"
+            style="margin: 4px;"
+            >Next</b-button
+          >
+
+          <!-- table -->
+          <b-table
+            :items="intermediateTimes"
+            :fields="fields"
+            small
+            fixed
+            responsive="sm"
+            :perPage="perPage"
+            :currentPage="currentPageIntermediate"
+          ></b-table>
         </b-tab>
 
         <!-- Advanced High Scores -->
         <b-tab no-body title="Advanced">
+          <!-- previous page button -->
+          <b-button
+            :disabled="currentPageAdvanced < 2"
+            @click="currentPageAdvanced--"
+            style="margin: 4px;"
+            >Prev</b-button
+          >
 
+          <!-- next page button -->
+          <b-button
+            :disabled="currentPageAdvanced * perPage >= times.length"
+            @click="currentPageAdvanced++"
+            style="margin: 4px;"
+            >Next</b-button
+          >
+
+          <!-- table -->
+          <b-table
+            :items="advancedTimes"
+            :fields="fields"
+            small
+            fixed
+            responsive="sm"
+            :perPage="perPage"
+            :currentPage="currentPageAdvanced"
+          ></b-table>
         </b-tab>
 
       </b-tabs>
@@ -126,17 +201,98 @@
 
         <!-- Beginner High Scores -->
         <b-tab no-body active title="Beginner" title-link-class="bg-secondary">
-          
+          <!-- previous page button -->
+          <b-button
+            :disabled="currentPageBeginner < 2"
+            @click="currentPageBeginner--"
+            style="margin: 4px;"
+            variant="light"
+            >Prev</b-button
+          >
+
+          <!-- next page button -->
+          <b-button
+            :disabled="currentPageBeginner * perPage >= times.length"
+            @click="currentPageBeginner++"
+            style="margin: 4px;"
+            variant="light"
+            >Next</b-button
+          >
+
+          <!-- table -->
+          <b-table
+            :items="beginnerTimes"
+            :fields="fields"
+            small
+            fixed
+            responsive="sm"
+            :perPage="perPage"
+            :currentPage="currentPageBeginner"
+          ></b-table>
         </b-tab>
 
         <!-- Intermediate High Scores -->
         <b-tab no-body title="Intermediate" title-link-class="bg-secondary">
-          
+          <!-- previous page button -->
+          <b-button
+            :disabled="currentPageIntermediate < 2"
+            @click="currentPageIntermediate--"
+            style="margin: 4px;"
+            variant="light"
+            >Prev</b-button
+          >
+
+          <!-- next page button -->
+          <b-button
+            :disabled="currentPageIntermediate * perPage >= times.length"
+            @click="currentPageIntermediate++"
+            style="margin: 4px;"
+            variant="light"
+            >Next</b-button
+          >
+
+          <!-- table -->
+          <b-table
+            :items="intermediateTimes"
+            :fields="fields"
+            small
+            fixed
+            responsive="sm"
+            :perPage="perPage"
+            :currentPage="currentPageIntermediate"
+          ></b-table>
         </b-tab>
 
         <!-- Advanced High Scores -->
         <b-tab no-body title="Advanced" title-link-class="bg-secondary">
+          <!-- previous page button -->
+          <b-button
+            :disabled="currentPageAdvanced < 2"
+            @click="currentPageAdvanced--"
+            style="margin: 4px;"
+            variant="light"
+            >Prev</b-button
+          >
 
+          <!-- next page button -->
+          <b-button
+            :disabled="currentPageAdvanced * perPage >= times.length"
+            @click="currentPageAdvanced++"
+            style="margin: 4px;"
+            variant="light"
+            >Next</b-button
+          >
+
+          <!-- table -->
+          <b-table
+            :items="advancedTimes"
+            :fields="fields"
+            small
+            fixed
+            responsive="sm"
+            :perPage="perPage"
+            :currentPage="currentPageAdvanced"
+          ></b-table>
         </b-tab>
 
       </b-tabs>
@@ -166,18 +322,52 @@ export default {
   async created() {
     let i = store.dispatch('getScoresMongo')
     await i
-    console.log(this.times)
+    this.sortTimes()
   },
   data() {
     return {
+      advancedTimes: [],
+      beginnerTimes: [],
+      currentPageAdvanced: 1,
+      currentPageBeginner: 1,
+      currentPageIntermediate: 1,
+      fields: ['rank', 'name', 'time'],
+      intermediateTimes: [],
       nightMode: false,
       options: [
         { item: 'Night Mode', name: 'Night Mode' }
       ],
-      zoomLevel: 3
+      perPage: 10,
+      zoomLevel: 3,
     }
   },
   methods: {
+    compareTimes(a, b) {
+      return a.time - b.time
+    },
+    sortTimes() {
+      this.times.forEach(time => {
+        if (time.level == 1) {
+          this.beginnerTimes.push(JSON.parse(JSON.stringify(time)))
+        } else if (time.level == 2) {
+          this.intermediateTimes.push(JSON.parse(JSON.stringify(time)))
+        } else if (time.level == 3) {
+          this.advancedTimes.push(JSON.parse(JSON.stringify(time)))
+        }
+      })
+      this.beginnerTimes.sort(this.compareTimes)
+      for (let i = 0; i < this.beginnerTimes.length; i++) {
+        this.beginnerTimes[i].rank = i + 1
+      }
+      this.intermediateTimes.sort(this.compareTimes)
+      for (let i = 0; i < this.intermediateTimes.length; i++) {
+        this.intermediateTimes[i].rank = i + 1
+      }
+      this.advancedTimes.sort(this.compareTimes)
+      for (let i = 0; i < this.advancedTimes.length; i++) {
+        this.advancedTimes[i].rank = i + 1
+      }
+    },
     ...mapActions([
       'getScoresMongo',
       'toggleNightMode',

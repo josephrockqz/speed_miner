@@ -2,8 +2,11 @@
 
   <div id="nav" style="margin-top:15px; margin-bottom: 100px;">
     
-    <div style="font-size: 32px;">CHOOSE A LEVEL</div>
-    <div>(hover over levels to see specifications)</div>
+    <div style="font-size: 32px;" v-show="nightModeBool == false">CHOOSE A LEVEL</div>
+    <div v-show="nightModeBool == false">(hover over levels to see specifications)</div>
+
+    <div style="font-size: 32px; color: black;" v-show="nightModeBool == true">CHOOSE A LEVEL</div>
+    <div style="color: black;" v-show="nightModeBool == true">(hover over levels to see specifications)</div>
 
     <b-button v-for="level in levels"
               :key="level"
@@ -57,7 +60,14 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
+
 export default {
+  computed: {
+    ...mapState({
+      nightModeBool: 'nightModeBool'
+    })
+  },
   data() {
     return {
       levels: [
