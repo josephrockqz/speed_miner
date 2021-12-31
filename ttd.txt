@@ -4,7 +4,6 @@
     + keep variable for ongoing average
     + whenever new game is submitted, retrieve values, calculate/store new values
     + make tab for displaying personal statistics
-- make confirmation when clicking mine icon in top right
 
 - Try to break the game
     + use middle click
