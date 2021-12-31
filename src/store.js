@@ -6,7 +6,11 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
+    advancedGamesPlayed: 0,
+    advancedGamesWon: 0,
     backgroundColor: '#e9e9e9',
+    beginnerGamesPlayed: 0,
+    beginnerGamesWon: 0,
     cells: [],
     disableGridBool: false,
     gameLossModalBool: false,
@@ -15,6 +19,8 @@ export default new Vuex.Store({
     errors: [],
     height: 0,
     level: 0,
+    intermediateGamesPlayed: 0,
+    intermediateGamesWon: 0,
     mineIndices: new Set(),
     nightModeBool: false,
     numCells: 0,
@@ -119,6 +125,18 @@ export default new Vuex.Store({
     RESET_TIME_ELPASED(state) {
       state.timeElapsed = 0
     },
+    SET_BEGINNER_STATISTICS(state, payload) {
+      state.beginnerGamesPlayed = payload.num_games
+      state.beginnerGamesWon = payload.num_wins
+    },
+    SET_INTERMEDIATE_STATISTICS(state, payload) {
+      state.intermediateGamesPlayed = payload.num_games
+      state.intermediateGamesWon = payload.num_wins
+    },
+    SET_ADVANCED_STATISTICS(state, payload) {
+      state.advancedGamesPlayed = payload.num_games
+      state.advancedGamesWon = payload.num_wins
+    },
     SET_SCORES(state, data) {
       state.times = data
     },
@@ -170,7 +188,7 @@ export default new Vuex.Store({
     }
   },
   actions: {
-    async checkCell({ commit, dispatch, state }, { cell_index }) {
+    async checkCell({ commit, dispatch, state }, { cell_index, level }) {
       if (state.disableGridBool == true) {
         return
       }
@@ -195,15 +213,19 @@ export default new Vuex.Store({
           cell_index: cell_index
         })
         // see if game is won
-        await dispatch('checkGameWon')
+        await dispatch('checkGameWon', {
+          level: level
+        })
       } 
       // mine is clicked
       else if (state.mineIndices.has(cell_index) && !state.squares[cell_index].classList.contains('flag')) {
         commit('CELL_MINE_DEATH', cell_index)
-        await dispatch('gameLoss')
+        await dispatch('gameLoss', {
+          level: level
+        })
       }
     },
-    async checkGameWon({ dispatch, state }) {
+    async checkGameWon({ dispatch, state }, { level }) {
       // check to see if uncovered cell is last cell to uncover
         // if so, trigger gameWin action
         // get exact time it took to clear board
@@ -214,10 +236,12 @@ export default new Vuex.Store({
           }
         }
         if (game_win_bool == true) {
-          await dispatch('gameWin')
+          await dispatch('gameWin', {
+            level: level
+          })
         }
     },
-    checkMiddleClick({ dispatch, state }, { cell_index }) {
+    checkMiddleClick({ dispatch, state }, { cell_index, level }) {
       // first, only continue if cell middle clicked is uncovered and has nearby mines
       if (!state.squares[cell_index].classList.contains('uncovered') || state.squares[cell_index].innerText == 0) {
         return
@@ -230,10 +254,13 @@ export default new Vuex.Store({
           // third, reveal cells around middle click
           // if any mines are stepped on ==> game loss
           dispatch('uncoverMiddleClick', {
-            cell_index: cell_index
+            cell_index: cell_index,
+            level: level
           }).then(() => {
             // fourth, check to see if game is won
-            dispatch('checkGameWon')
+            dispatch('checkGameWon', {
+              level: level
+            })
           })
         }
       })
@@ -244,19 +271,27 @@ export default new Vuex.Store({
     closeGameWinModal({ commit }) {
       commit('CLOSE_GAME_WIN_MODAL')
     },
-    async gameLoss({ commit, dispatch }) {
+    async gameLoss({ commit, dispatch }, { level }) {
       commit('END_TIMER')
       commit('DISABLE_GRID')
       commit('SWITCH_GAME_START_BOOL_OFF')
       await dispatch('revealGridAfterLoss')
+      await dispatch('updateUserStatistics', {
+        game_won_bool: false,
+        level: level,
+      })
       // state.gameLossModalBool = true // uncomment this to reinstantiate modal after game loss
     },
-    async gameWin({ commit, dispatch, state }) {
+    async gameWin({ commit, dispatch, state }, { level }) {
       commit('END_TIMER')
       commit('DISABLE_GRID')
       commit('SWITCH_GAME_START_BOOL_OFF')
       commit('ZERO_MINE_COUNTER')
       await dispatch('revealGridAfterWin')
+      await dispatch('updateUserStatistics', {
+        game_won_bool: true,
+        level: level,
+      })
       state.gameWinModalBool = true
     },
     getNeighborMinesRectangle({ state }, { cell_index }) {
@@ -343,6 +378,46 @@ export default new Vuex.Store({
     getSquares({ commit, state }) {
       let squares = Array.from(document.querySelectorAll('.level' + state.level + ' div'))
       commit('GET_SQUARES', squares)
+    },
+    getUserStatistics({ commit }) {
+      let games_so_far
+      let wins_so_far
+      games_so_far = localStorage.getItem("numBeginnerGames")
+      wins_so_far = localStorage.getItem("numBeginnerWins")
+      if (games_so_far == null) {
+        games_so_far = 0
+      }
+      if (wins_so_far == null) {
+        wins_so_far = 0
+      }
+      commit('SET_BEGINNER_STATISTICS', {
+        num_games: games_so_far,
+        num_wins: wins_so_far
+      })
+      games_so_far = localStorage.getItem("numIntermediateGames")
+      wins_so_far = localStorage.getItem("numIntermediateWins")
+      if (games_so_far == null) {
+        games_so_far = 0
+      }
+      if (wins_so_far == null) {
+        wins_so_far = 0
+      }
+      commit('SET_INTERMEDIATE_STATISTICS', {
+        num_games: games_so_far,
+        num_wins: wins_so_far
+      })
+      games_so_far = localStorage.getItem("numAdvancedGames")
+      wins_so_far = localStorage.getItem("numAdvancedWins")
+      if (games_so_far == null) {
+        games_so_far = 0
+      }
+      if (wins_so_far == null) {
+        wins_so_far = 0
+      }
+      commit('SET_ADVANCED_STATISTICS', {
+        num_games: games_so_far,
+        num_wins: wins_so_far
+      })
     },
     instantiateRectangleLevel({ commit }, { height, level, num_cells, num_mines, width }) {
       commit('INSTATIATE_RECTANGLE_LEVEL', {
@@ -491,9 +566,11 @@ export default new Vuex.Store({
       commit('SET_START_TIME')
       commit('START_TIMER')
     },
-    timeExceeded({ commit, dispatch }) {
+    timeExceeded({ commit, dispatch }, { level }) {
       // ran out of time - game over
-      dispatch('gameLoss')
+      dispatch('gameLoss', {
+        level: level
+      })
       // create some sort of alert that you lost
       // because time was exceeded
       alert('You lost because maximum time of 999 seconds was exceeded')
@@ -531,7 +608,7 @@ export default new Vuex.Store({
         }
       })
     },
-    uncoverMiddleClick({ commit, dispatch, state }, { cell_index }) {
+    uncoverMiddleClick({ commit, dispatch, state }, { cell_index, level }) {
       // upper cell
       if (cell_index - state.width >= 0) {
         if (!state.mineIndices.has(cell_index - state.width)) {
@@ -541,7 +618,9 @@ export default new Vuex.Store({
         }
         else if (state.mineIndices.has(cell_index - state.width) && !state.squares[cell_index - state.width].classList.contains('flag')) {
           commit('CELL_MINE_DEATH', cell_index - state.width)
-          dispatch('gameLoss')
+          dispatch('gameLoss', {
+            level: level
+          })
         }
       }
       // lower cell
@@ -553,7 +632,9 @@ export default new Vuex.Store({
         }
         else if (state.mineIndices.has(cell_index + state.width) && !state.squares[cell_index + state.width].classList.contains('flag')) {
           commit('CELL_MINE_DEATH', cell_index + state.width)
-          dispatch('gameLoss')
+          dispatch('gameLoss', {
+            level: level
+          })
         }
       }
       // left cell
@@ -565,7 +646,9 @@ export default new Vuex.Store({
         }
         else if (state.mineIndices.has(cell_index - 1) && !state.squares[cell_index - 1].classList.contains('flag')) {
           commit('CELL_MINE_DEATH', cell_index - 1)
-          dispatch('gameLoss')
+          dispatch('gameLoss', {
+            level: level
+          })
         }
       }
       // right cell
@@ -577,7 +660,9 @@ export default new Vuex.Store({
         }
         else if (state.mineIndices.has(cell_index + 1) && !state.squares[cell_index + 1].classList.contains('flag')) {
           commit('CELL_MINE_DEATH', cell_index + 1)
-          dispatch('gameLoss')
+          dispatch('gameLoss', {
+            level: level
+          })
         }
       }
       // upper left cell
@@ -589,7 +674,9 @@ export default new Vuex.Store({
         }
         else if (state.mineIndices.has(cell_index - state.width - 1) && !state.squares[cell_index - state.width - 1].classList.contains('flag')) {
           commit('CELL_MINE_DEATH', cell_index - state.width - 1)
-          dispatch('gameLoss')
+          dispatch('gameLoss', {
+            level: level
+          })
         }
       }
       // upper right cell
@@ -601,7 +688,9 @@ export default new Vuex.Store({
         }
         else if (state.mineIndices.has(cell_index - state.width + 1) && !state.squares[cell_index - state.width + 1].classList.contains('flag')) {
           commit('CELL_MINE_DEATH', cell_index - state.width + 1)
-          dispatch('gameLoss')
+          dispatch('gameLoss', {
+            level: level
+          })
         }
       }
       // lower left cell
@@ -613,7 +702,9 @@ export default new Vuex.Store({
         }
         else if (state.mineIndices.has(cell_index + state.width - 1) && !state.squares[cell_index + state.width - 1].classList.contains('flag')) {
           commit('CELL_MINE_DEATH', cell_index + state.width - 1)
-          dispatch('gameLoss')
+          dispatch('gameLoss', {
+            level: level
+          })
         }
       }
       // lower right cell
@@ -625,8 +716,73 @@ export default new Vuex.Store({
         }
         else if (state.mineIndices.has(cell_index + state.width + 1) && !state.squares[cell_index + state.width + 1].classList.contains('flag')) {
           commit('CELL_MINE_DEATH', cell_index + state.width + 1)
-          dispatch('gameLoss')
+          dispatch('gameLoss', {
+            level: level
+          })
         }
+      }
+    },
+    updateUserStatistics({ commit }, { game_won_bool, level}) {
+      // update user statistics using local storage
+      let games_so_far
+      let wins_so_far
+      if (level == 1) {
+        games_so_far = localStorage.getItem("numBeginnerGames")
+        wins_so_far = localStorage.getItem("numBeginnerWins")
+        if (games_so_far == null) {
+          games_so_far = 0
+        }
+        if (wins_so_far == null) {
+          wins_so_far = 0
+        }
+        games_so_far++
+        if (game_won_bool == true) {
+          wins_so_far++
+        }
+        localStorage.setItem('numBeginnerGames', games_so_far)
+        localStorage.setItem('numBeginnerWins', wins_so_far)
+        commit('SET_BEGINNER_STATISTICS', {
+          num_games: games_so_far,
+          num_wins: wins_so_far
+        })
+      } else if (level == 2) {
+        games_so_far = localStorage.getItem("numIntermediateGames")
+        wins_so_far = localStorage.getItem("numIntermediateWins")
+        if (games_so_far == null) {
+          games_so_far = 0
+        }
+        if (wins_so_far == null) {
+          wins_so_far = 0
+        }
+        games_so_far++
+        if (game_won_bool == true) {
+          wins_so_far++
+        }
+        localStorage.setItem('numIntermediateGames', games_so_far)
+        localStorage.setItem('numIntermediateWins', wins_so_far)
+        commit('SET_INTERMEDIATE_STATISTICS', {
+          num_games: games_so_far,
+          num_wins: wins_so_far
+        })
+      } else if (level == 3) {
+        games_so_far = localStorage.getItem("numAdvancedGames")
+        wins_so_far = localStorage.getItem("numAdvancedWins")
+        if (games_so_far == null) {
+          games_so_far = 0
+        }
+        if (wins_so_far == null) {
+          wins_so_far = 0
+        }
+        games_so_far++
+        if (game_won_bool == true) {
+          wins_so_far++
+        }
+        localStorage.setItem('numAdvancedGames', games_so_far)
+        localStorage.setItem('numAdvancedWins', wins_so_far)
+        commit('SET_ADVANCED_STATISTICS', {
+          num_games: games_so_far,
+          num_wins: wins_so_far
+        })
       }
     }
   },

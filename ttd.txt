@@ -4,8 +4,13 @@
     + keep variable for ongoing average
     + whenever new game is submitted, retrieve values, calculate/store new values
     + make tab for displaying personal statistics
+- make confirmation when clicking mine icon in top right
 
 - Try to break the game
+    + use middle click
+    + mess with home screen
+    + retry games
+    + referesh pages a bunch
 - Deploy game to website
     + do all the necessary steps
         - add endpoint to cloudflare

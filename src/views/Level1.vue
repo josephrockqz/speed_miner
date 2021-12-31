@@ -10,9 +10,9 @@
       <!--Game Grid-->
       <div v-for="cell in cells"
            :key="cell"
-           @click="$store.dispatch('checkCell', {cell_index: cell})"
+           @click="$store.dispatch('checkCell', {cell_index: cell, level: level})"
            @click.right.prevent="$store.dispatch('placeFlag', {cell_index: cell})"
-           @click.middle="$store.dispatch('checkMiddleClick', {cell_index: cell})"
+           @click.middle="$store.dispatch('checkMiddleClick', {cell_index: cell, level: level})"
       >
       </div>
 
@@ -79,6 +79,12 @@ export default {
   background-color: #999999;
   border: #000000 10px solid;
   margin: 0 auto;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 .level1 div {
   height: 40px;

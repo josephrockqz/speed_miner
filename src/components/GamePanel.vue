@@ -81,7 +81,9 @@ export default {
   watch: {
     timeElapsed() {
       if (this.timeElapsed > 999) {
-        store.dispatch('timeExceeded')
+        store.dispatch('timeExceeded', {
+          level: this.level
+        })
       }
     }
   }

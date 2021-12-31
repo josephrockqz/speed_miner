@@ -43,7 +43,22 @@
 
         <!-- Statistics Tab -->
         <b-tab title="Statistics">
-          
+
+          <div style="width: 400px;">
+            <!-- Beginner Statistics -->
+            <div class="d-flex flex-row" style="justify-content: space-between;"><span>Beginner Games Won:</span><span>{{ beginnerGamesWon }}</span></div>
+            <div class="d-flex flex-row" style="justify-content: space-between;"><span>Beginner Games Played:</span><span>{{ beginnerGamesPlayed }}</span></div>
+            <div class="d-flex flex-row" style="justify-content: space-between;"><span>Beginner Win Percentage:</span><span>{{ beginnerAverage }}%</span></div>
+            <!-- Intermediate Statistics -->
+            <div class="d-flex flex-row" style="justify-content: space-between;"><span>Intermediate Games Won:</span><span>{{ intermediateGamesWon }}</span></div>
+            <div class="d-flex flex-row" style="justify-content: space-between;"><span>Intermediate Games Played:</span><span>{{ intermediateGamesPlayed }}</span></div>
+            <div class="d-flex flex-row" style="justify-content: space-between;"><span>Intermediate Win Percentage:</span><span>{{ intermediateAverage }}%</span></div>
+            <!-- Advanced Statistics -->
+            <div class="d-flex flex-row" style="justify-content: space-between;"><span>Advanced Games Won:</span><span>{{ advancedGamesWon }}</span></div>
+            <div class="d-flex flex-row" style="justify-content: space-between;"><span>Advanced Games Played:</span><span>{{ advancedGamesPlayed }}</span></div>
+            <div class="d-flex flex-row" style="justify-content: space-between;"><span>Advanced Win Percentage:</span><span>{{ advancedAverage }}%</span></div>
+          </div>
+
         </b-tab>
 
       </b-tabs>
@@ -314,24 +329,36 @@ export default {
   },
   computed: {
     ...mapState({
+      advancedGamesPlayed: 'advancedGamesPlayed',
+      advancedGamesWon: 'advancedGamesWon',
       backgroundColor: 'backgroundColor',
+      beginnerGamesPlayed: 'beginnerGamesPlayed',
+      beginnerGamesWon: 'beginnerGamesWon',
+      intermediateGamesPlayed: 'intermediateGamesPlayed',
+      intermediateGamesWon: 'intermediateGamesWon',
       nightModeBool: 'nightModeBool',
       times: 'times'
     })
   },
   async created() {
+    store.dispatch('getUserStatistics').then(() => {
+      this.calculateUserStatisticAverages()
+    })
     let i = store.dispatch('getScoresMongo')
     await i
     this.sortTimes()
   },
   data() {
     return {
+      advancedAverage: 0,
       advancedTimes: [],
+      beginnerAverage: 0,
       beginnerTimes: [],
       currentPageAdvanced: 1,
       currentPageBeginner: 1,
       currentPageIntermediate: 1,
       fields: ['rank', 'name', 'time'],
+      intermediateAverage: 0,
       intermediateTimes: [],
       nightMode: false,
       options: [
@@ -342,6 +369,23 @@ export default {
     }
   },
   methods: {
+    calculateUserStatisticAverages() {
+      if (this.beginnerGamesPlayed == 0) {
+        this.beginnerAverage = 0
+      } else {
+        this.beginnerAverage = (this.beginnerGamesWon / this.beginnerGamesPlayed * 100).toFixed(3)
+      }
+      if (this.intermediateGamesPlayed == 0) {
+        this.intermediateAverage = 0
+      } else {
+        this.intermediateAverage = (this.intermediateGamesWon / this.intermediateGamesPlayed * 100).toFixed(3)
+      }
+      if (this.advancedGamesPlayed == 0) {
+        this.advancedAverage = 0
+      } else {
+        this.advancedAverage = (this.advancedGamesWon / this.advancedGamesPlayed * 100).toFixed(3)
+      }
+    },
     compareTimes(a, b) {
       return a.time - b.time
     },
