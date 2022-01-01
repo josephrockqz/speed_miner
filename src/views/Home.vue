@@ -11,7 +11,7 @@
       <b-tabs card justified>
 
         <!-- Controls Tab -->
-        <b-tab title="Controls" active no-body>
+        <b-tab title="Controls" no-body>
 
           <ul style="text-align: left;">
 
@@ -25,7 +25,7 @@
         </b-tab>
 
         <!-- Display Tab -->
-        <b-tab title="Display" align="center">
+        <b-tab title="Display" active align="center">
 
           <div>
 
@@ -137,7 +137,7 @@
       <b-tabs card justified>
 
         <!-- Beginner High Scores -->
-        <b-tab no-body active title="Beginner">
+        <b-tab no-body title="Beginner">
           <!-- previous page button -->
           <b-button
             :disabled="currentPageBeginner < 2"
@@ -167,7 +167,7 @@
         </b-tab>
 
         <!-- Intermediate High Scores -->
-        <b-tab no-body title="Intermediate">
+        <b-tab no-body active title="Intermediate">
           <!-- previous page button -->
           <b-button
             :disabled="currentPageIntermediate < 2"
@@ -236,7 +236,7 @@
       <b-tabs card justified>
 
         <!-- Beginner High Scores -->
-        <b-tab no-body active title="Beginner" title-link-class="bg-secondary">
+        <b-tab no-body title="Beginner" title-link-class="bg-secondary">
           <!-- previous page button -->
           <b-button
             :disabled="currentPageBeginner < 2"
@@ -268,7 +268,7 @@
         </b-tab>
 
         <!-- Intermediate High Scores -->
-        <b-tab no-body title="Intermediate" title-link-class="bg-secondary">
+        <b-tab no-body active title="Intermediate" title-link-class="bg-secondary">
           <!-- previous page button -->
           <b-button
             :disabled="currentPageIntermediate < 2"
