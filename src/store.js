@@ -4,7 +4,7 @@ import EventServiceMongo from './services/EventServiceMongo'
 
 Vue.use(Vuex)
 
-function getNeighborIndices(cell_index, width, height) {
+export function getNeighborIndices(cell_index, width, height) {
   const maxIndex = height * width - 1
   const neighbors = []
   const notLeftEdge = cell_index % width != 0
@@ -22,13 +22,14 @@ function getNeighborIndices(cell_index, width, height) {
   return neighbors
 }
 
-function isValidIndex(cell_index, state) {
+export function isValidIndex(cell_index, state) {
   return cell_index >= 0 && cell_index < state.numCells && state.squares[cell_index] != null
 }
 
-export default new Vuex.Store({
-  state: {
-    advancedGamesPlayed: 0,
+export function createStoreConfig() {
+  return {
+    state: {
+      advancedGamesPlayed: 0,
     advancedGamesWon: 0,
     backgroundColor: '#e9e9e9',
     beginnerGamesPlayed: 0,
@@ -533,5 +534,8 @@ export default new Vuex.Store({
       commit(config.mutation, { num_games, num_wins })
     }
   },
-  modules: {}
-})
+    modules: {}
+  }
+}
+
+export default new Vuex.Store(createStoreConfig())
