@@ -66,6 +66,9 @@ export default {
     await store.dispatch('makeCells', {
       num_cells: this.num_cells
     })
+  },
+  beforeDestroy() {
+    store.dispatch('restartGame')
   }
 }
 </script>

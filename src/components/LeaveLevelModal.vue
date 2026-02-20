@@ -2,14 +2,17 @@
     <b-modal
       id="leave-level-modal"
       title="Are you sure you want to leave this level?"
-      no-close-on-esc
-      no-close-on-backdrop
       hide-footer
     >
       <h4>Progress will not be saved</h4>
-      <button @click.prevent="leaveLevel()" style="float: right;">
-        Yes
-      </button>
+      <div style="float: right;">
+        <button @click.prevent="cancel()" style="margin-right: 8px;">
+          Cancel
+        </button>
+        <button @click.prevent="leaveLevel()">
+          Yes
+        </button>
+      </div>
     </b-modal>
 </template>
 
@@ -22,6 +25,9 @@ export default {
     ...mapActions([
       'restartGame'
     ]),
+    cancel() {
+      this.$bvModal.hide('leave-level-modal')
+    },
     async leaveLevel() {
       this.$router.push('/')
       await store.dispatch('restartGame')

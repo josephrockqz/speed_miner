@@ -72,8 +72,14 @@ export default new Vuex.Store({
     CLOSE_GAME_LOSS_MODAL(state) {
       state.gameLossModalBool = false
     },
+    OPEN_GAME_LOSS_MODAL(state) {
+      state.gameLossModalBool = true
+    },
     CLOSE_GAME_WIN_MODAL(state) {
       state.gameWinModalBool = false
+    },
+    OPEN_GAME_WIN_MODAL(state) {
+      state.gameWinModalBool = true
     },
     DECREMENT_MINE_COUNTER(state) {
       state.numMinesLeft--
@@ -280,9 +286,9 @@ export default new Vuex.Store({
         game_won_bool: false,
         level: level,
       })
-      // state.gameLossModalBool = true // uncomment this to reinstantiate modal after game loss
+      commit('OPEN_GAME_LOSS_MODAL')
     },
-    async gameWin({ commit, dispatch, state }, { level }) {
+    async gameWin({ commit, dispatch }, { level }) {
       commit('END_TIMER')
       commit('DISABLE_GRID')
       commit('SWITCH_GAME_START_BOOL_OFF')
@@ -292,7 +298,7 @@ export default new Vuex.Store({
         game_won_bool: true,
         level: level,
       })
-      state.gameWinModalBool = true
+      commit('OPEN_GAME_WIN_MODAL')
     },
     getNeighborMinesRectangle({ state }, { cell_index }) {
       let numberOfNeighborMines = 0
@@ -457,20 +463,38 @@ export default new Vuex.Store({
       function getRandomInt(max) {
         return Math.floor(Math.random() * max)
       }
-      // code snippet gets the indices for the random
-      // placement of the mines in the level
+      // build exclusion zone: first-clicked cell + its 3x3 neighborhood
+      let excluded = new Set()
+      excluded.add(start_index)
+      // upper cell
+      if (start_index - state.width >= 0) excluded.add(start_index - state.width)
+      // lower cell
+      if (start_index + state.width <= (state.height * state.width - 1)) excluded.add(start_index + state.width)
+      // left cell
+      if (start_index % state.width != 0) excluded.add(start_index - 1)
+      // right cell
+      if (start_index % state.width != (state.width - 1)) excluded.add(start_index + 1)
+      // upper left cell
+      if (start_index % state.width != 0 && start_index - state.width >= 0) excluded.add(start_index - state.width - 1)
+      // upper right cell
+      if (start_index % state.width != (state.width - 1) && start_index - state.width >= 0) excluded.add(start_index - state.width + 1)
+      // lower left cell
+      if (start_index % state.width != 0 && start_index + state.width <= (state.height * state.width - 1)) excluded.add(start_index + state.width - 1)
+      // lower right cell
+      if (start_index % state.width != (state.width - 1) && start_index + state.width <= (state.height * state.width - 1)) excluded.add(start_index + state.width + 1)
+
+      // place mines, avoiding the exclusion zone
       let i = 0
       while (i < state.numMines) {
         let placement = getRandomInt(state.numCells)
-        if (!state.mineIndices.has(placement) && placement != start_index) {
-          // state.mineIndices.add(placement)
+        if (!state.mineIndices.has(placement) && !excluded.has(placement)) {
           commit('PLACE_MINE', placement)
           i++
         }
       }
     },
     postScoreMongo({ commit }, { level, name, time }) {
-      EventServiceMongo.insertScore(level, name, time).catch(error => {
+      return EventServiceMongo.insertScore(level, name, time).catch(error => {
         commit('ADD_ERROR', error)
       })
     },
@@ -566,16 +590,11 @@ export default new Vuex.Store({
       commit('SET_START_TIME')
       commit('START_TIMER')
     },
-    timeExceeded({ commit, dispatch }, { level }) {
-      // ran out of time - game over
-      dispatch('gameLoss', {
+    async timeExceeded({ commit, dispatch }, { level }) {
+      commit('SET_TIME_ELAPSED_MAX')
+      await dispatch('gameLoss', {
         level: level
       })
-      // create some sort of alert that you lost
-      // because time was exceeded
-      alert('You lost because maximum time of 999 seconds was exceeded')
-      // set timeElapsed to 999
-      commit('SET_TIME_ELAPSED_MAX')
     },
     toggleNightMode({ commit }, { night_mode_bool }) {
       commit('TOGGLE_NIGHT_MODE', night_mode_bool)
@@ -609,117 +628,62 @@ export default new Vuex.Store({
       })
     },
     uncoverMiddleClick({ commit, dispatch, state }, { cell_index, level }) {
+      if (state.disableGridBool == true) {
+        return
+      }
+      let hitMine = false
+
+      // Helper to process each neighbor
+      function processNeighbor(neighborIndex) {
+        if (!state.mineIndices.has(neighborIndex)) {
+          dispatch('uncoverCell', {
+            cell_index: neighborIndex
+          })
+        }
+        else if (state.mineIndices.has(neighborIndex) && !state.squares[neighborIndex].classList.contains('flag')) {
+          commit('CELL_MINE_DEATH', neighborIndex)
+          hitMine = true
+        }
+      }
+
       // upper cell
       if (cell_index - state.width >= 0) {
-        if (!state.mineIndices.has(cell_index - state.width)) {
-          dispatch('uncoverCell', {
-            cell_index: cell_index - state.width
-          })
-        }
-        else if (state.mineIndices.has(cell_index - state.width) && !state.squares[cell_index - state.width].classList.contains('flag')) {
-          commit('CELL_MINE_DEATH', cell_index - state.width)
-          dispatch('gameLoss', {
-            level: level
-          })
-        }
+        processNeighbor(cell_index - state.width)
       }
       // lower cell
       if (cell_index + state.width <= (state.height * state.width - 1)) {
-        if (!state.mineIndices.has(cell_index + state.width)) {
-          dispatch('uncoverCell', {
-            cell_index: cell_index + state.width
-          })
-        }
-        else if (state.mineIndices.has(cell_index + state.width) && !state.squares[cell_index + state.width].classList.contains('flag')) {
-          commit('CELL_MINE_DEATH', cell_index + state.width)
-          dispatch('gameLoss', {
-            level: level
-          })
-        }
+        processNeighbor(cell_index + state.width)
       }
       // left cell
       if (cell_index % state.width != 0) {
-        if (!state.mineIndices.has(cell_index - 1)) {
-          dispatch('uncoverCell', {
-            cell_index: cell_index - 1
-          })
-        }
-        else if (state.mineIndices.has(cell_index - 1) && !state.squares[cell_index - 1].classList.contains('flag')) {
-          commit('CELL_MINE_DEATH', cell_index - 1)
-          dispatch('gameLoss', {
-            level: level
-          })
-        }
+        processNeighbor(cell_index - 1)
       }
       // right cell
       if (cell_index % state.width != (state.width - 1)) {
-        if (!state.mineIndices.has(cell_index + 1)) {
-          dispatch('uncoverCell', {
-            cell_index: cell_index + 1
-          })
-        }
-        else if (state.mineIndices.has(cell_index + 1) && !state.squares[cell_index + 1].classList.contains('flag')) {
-          commit('CELL_MINE_DEATH', cell_index + 1)
-          dispatch('gameLoss', {
-            level: level
-          })
-        }
+        processNeighbor(cell_index + 1)
       }
       // upper left cell
       if (cell_index % state.width != 0 && cell_index - state.width >= 0) {
-        if (!state.mineIndices.has(cell_index - state.width - 1)) {
-          dispatch('uncoverCell', {
-            cell_index: cell_index - state.width - 1
-          })
-        }
-        else if (state.mineIndices.has(cell_index - state.width - 1) && !state.squares[cell_index - state.width - 1].classList.contains('flag')) {
-          commit('CELL_MINE_DEATH', cell_index - state.width - 1)
-          dispatch('gameLoss', {
-            level: level
-          })
-        }
+        processNeighbor(cell_index - state.width - 1)
       }
       // upper right cell
       if (cell_index % state.width != (state.width - 1) && cell_index - state.width >= 0) {
-        if (!state.mineIndices.has(cell_index - state.width + 1)) {
-          dispatch('uncoverCell', {
-            cell_index: cell_index - state.width + 1
-          })
-        }
-        else if (state.mineIndices.has(cell_index - state.width + 1) && !state.squares[cell_index - state.width + 1].classList.contains('flag')) {
-          commit('CELL_MINE_DEATH', cell_index - state.width + 1)
-          dispatch('gameLoss', {
-            level: level
-          })
-        }
+        processNeighbor(cell_index - state.width + 1)
       }
       // lower left cell
       if (cell_index % state.width != 0 && cell_index + state.width <= (state.height * state.width - 1)) {
-        if (!state.mineIndices.has(cell_index + state.width - 1)) {
-          dispatch('uncoverCell', {
-            cell_index: cell_index + state.width - 1
-          })
-        }
-        else if (state.mineIndices.has(cell_index + state.width - 1) && !state.squares[cell_index + state.width - 1].classList.contains('flag')) {
-          commit('CELL_MINE_DEATH', cell_index + state.width - 1)
-          dispatch('gameLoss', {
-            level: level
-          })
-        }
+        processNeighbor(cell_index + state.width - 1)
       }
       // lower right cell
       if (cell_index % state.width != (state.width - 1) && cell_index + state.width <= (state.height * state.width - 1)) {
-        if (!state.mineIndices.has(cell_index + state.width + 1)) {
-          dispatch('uncoverCell', {
-            cell_index: cell_index + state.width + 1
-          })
-        }
-        else if (state.mineIndices.has(cell_index + state.width + 1) && !state.squares[cell_index + state.width + 1].classList.contains('flag')) {
-          commit('CELL_MINE_DEATH', cell_index + state.width + 1)
-          dispatch('gameLoss', {
-            level: level
-          })
-        }
+        processNeighbor(cell_index + state.width + 1)
+      }
+
+      // Dispatch gameLoss only once if any mine was hit
+      if (hitMine) {
+        dispatch('gameLoss', {
+          level: level
+        })
       }
     },
     updateUserStatistics({ commit }, { game_won_bool, level}) {

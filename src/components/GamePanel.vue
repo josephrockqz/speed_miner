@@ -5,9 +5,11 @@
     <div class="d-flex flex-row game-panel">
 
       <!-- Number of Mines Left -->
-      <div style="height: 50px; margin: 2.5px; vertical-align: middle; background-color: black; color: red; width: 60px; text-align:">
-        <h2 v-if="numMinesLeft > 9">0{{ numMinesLeft }}</h2>
-        <h2 v-else>00{{ numMinesLeft }}</h2>
+      <div style="height: 50px; margin: 2.5px; vertical-align: middle; background-color: black; color: red; width: 60px; text-align: center">
+        <h2 v-if="numMinesLeft >= 100">{{ numMinesLeft }}</h2>
+        <h2 v-else-if="numMinesLeft >= 10">0{{ numMinesLeft }}</h2>
+        <h2 v-else-if="numMinesLeft >= 0">00{{ numMinesLeft }}</h2>
+        <h2 v-else>-{{ String(Math.abs(numMinesLeft)).padStart(2, '0') }}</h2>
       </div>
 
       <!-- Restart Game Button -->
@@ -18,7 +20,7 @@
       </b-button>
 
       <!-- Current Level Display -->
-      <div style="height: 50px; margin-top: 2.5px; vertical-align: middle; color: black; width: 40px; text-align:">
+      <div style="height: 50px; margin-top: 2.5px; vertical-align: middle; color: black; width: 40px; text-align: center">
         <h2>L{{ level }}</h2>
       </div>
 
@@ -30,7 +32,7 @@
       </b-button>
 
       <!-- Time Elapsed -->
-      <div style="height: 50px; margin: 2.5px; vertical-align: middle; background-color: black; color: red; width: 60px; text-align:">
+      <div style="height: 50px; margin: 2.5px; vertical-align: middle; background-color: black; color: red; width: 60px; text-align: center">
         <h2 v-if="timeElapsed < 10">00{{ timeElapsed }}</h2>
         <h2 v-else-if="timeElapsed >= 10 && timeElapsed < 100">0{{ timeElapsed }}</h2>
         <h2 v-else>{{ timeElapsed }}</h2>
