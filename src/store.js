@@ -22,6 +22,10 @@ function getNeighborIndices(cell_index, width, height) {
   return neighbors
 }
 
+function isValidIndex(cell_index, state) {
+  return cell_index >= 0 && cell_index < state.numCells && state.squares[cell_index] != null
+}
+
 export default new Vuex.Store({
   state: {
     advancedGamesPlayed: 0,
@@ -54,15 +58,19 @@ export default new Vuex.Store({
   },
   mutations: {
     ADD_ERROR(state, error) {
-      state.errors.push(error)
+      const message = (error && error.message) ? error.message : 'An unknown error occurred'
+      state.errors.push(message)
     },
     CELL_MINE(state, cell_index) {
+      if (!isValidIndex(cell_index, state)) return
       state.squares[cell_index].classList.add('mine')
     },
     CELL_MINE_DEATH(state, cell_index) {
+      if (!isValidIndex(cell_index, state)) return
       state.squares[cell_index].classList.add('mine-death')
     },
     CELL_NUMBER(state, payload) {
+      if (!isValidIndex(payload.cell_index, state)) return
       state.squares[payload.cell_index].innerText = payload.number
       state.squares[payload.cell_index].style.lineHeight = "40px"
       state.squares[payload.cell_index].style.fontSize = 'x-large'
@@ -85,6 +93,7 @@ export default new Vuex.Store({
       }
     },
     CELL_UNCOVER(state, cell_index) {
+      if (!isValidIndex(cell_index, state)) return
       state.squares[cell_index].classList.add('uncovered')
     },
     CLOSE_GAME_LOSS_MODAL(state) {
@@ -114,9 +123,11 @@ export default new Vuex.Store({
       clearInterval(state.timer)
     },
     FLAG_ADD(state, cell_index) {
+      if (!isValidIndex(cell_index, state)) return
       state.squares[cell_index].classList.add('flag')
     },
     FLAG_REMOVE(state, cell_index) {
+      if (!isValidIndex(cell_index, state)) return
       state.squares[cell_index].classList.remove('flag')
     },
     GET_SQUARES(state, squares) {
@@ -168,6 +179,7 @@ export default new Vuex.Store({
       state.timeElapsed = 999
     },
     START_TIMER(state) {
+      if (state.timer) clearInterval(state.timer)
       state.timer = window.setInterval(() => {
         let current_time = Date.now()
         let time_elapsed = current_time - state.startTime
@@ -195,17 +207,9 @@ export default new Vuex.Store({
       }
     },
     TOGGLE_ZOOM(state, zoom_level) {
-      if (zoom_level == 1) {
-        document.body.style.zoom = "50%"
-      } else if (zoom_level == 2) {
-        document.body.style.zoom = "75%"
-      } else if (zoom_level == 3) {
-        document.body.style.zoom = "100%"
-      } else if (zoom_level == 4) {
-        document.body.style.zoom = "150%"
-      } else if (zoom_level == 5) {
-        document.body.style.zoom = "200%"
-      } 
+      const zoomMap = { 1: '50%', 2: '75%', 3: '100%', 4: '150%', 5: '200%' }
+      const zoom = zoomMap[zoom_level]
+      if (zoom) document.body.style.zoom = zoom
     },
     ZERO_MINE_COUNTER(state) {
       state.numMinesLeft = 0
@@ -346,8 +350,8 @@ export default new Vuex.Store({
         { gamesKey: 'numAdvancedGames', winsKey: 'numAdvancedWins', mutation: 'SET_ADVANCED_STATISTICS' }
       ]
       levels.forEach(({ gamesKey, winsKey, mutation }) => {
-        const num_games = parseInt(localStorage.getItem(gamesKey), 10) || 0
-        const num_wins = parseInt(localStorage.getItem(winsKey), 10) || 0
+        const num_games = Math.max(0, parseInt(localStorage.getItem(gamesKey), 10) || 0)
+        const num_wins = Math.min(num_games, Math.max(0, parseInt(localStorage.getItem(winsKey), 10) || 0))
         commit(mutation, { num_games, num_wins })
       })
     },
@@ -521,8 +525,8 @@ export default new Vuex.Store({
       }
       const config = levelConfig[level]
       if (!config) return
-      let num_games = (parseInt(localStorage.getItem(config.gamesKey), 10) || 0) + 1
-      let num_wins = parseInt(localStorage.getItem(config.winsKey), 10) || 0
+      let num_games = Math.max(0, (parseInt(localStorage.getItem(config.gamesKey), 10) || 0)) + 1
+      let num_wins = Math.min(num_games - 1, Math.max(0, parseInt(localStorage.getItem(config.winsKey), 10) || 0))
       if (game_won_bool) num_wins++
       localStorage.setItem(config.gamesKey, num_games)
       localStorage.setItem(config.winsKey, num_wins)
