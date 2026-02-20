@@ -1,17 +1,17 @@
 <template>
 
-  <div style="width: 80%; margin: auto;">
+  <div class="home-page" style="width: 80%; margin: auto;">
 
     <!-- Level Menu Component -->
     <LevelMenu/>
 
-    <!-- Tabs Light Mode-->
-    <b-card no-body v-show="nightModeBool == false">
+    <!-- Tabs -->
+    <b-card no-body :bg-variant="nightModeBool ? 'secondary' : ''" :text-variant="nightModeBool ? 'white' : ''">
 
       <b-tabs card justified>
 
         <!-- Controls Tab -->
-        <b-tab title="Controls" no-body>
+        <b-tab title="Controls" :title-link-class="nightModeBool ? 'bg-secondary' : ''" no-body>
 
           <ul style="text-align: left;">
 
@@ -25,7 +25,7 @@
         </b-tab>
 
         <!-- Display Tab -->
-        <b-tab title="Display" active align="center">
+        <b-tab title="Display" active :title-link-class="nightModeBool ? 'bg-secondary' : ''" align="center">
 
           <div>
 
@@ -46,7 +46,7 @@
         </b-tab>
 
         <!-- Statistics Tab -->
-        <b-tab title="Statistics" align="center">
+        <b-tab title="Statistics" :title-link-class="nightModeBool ? 'bg-secondary' : ''" align="center">
 
           <div style="width: 400px;">
             <!-- Beginner Statistics -->
@@ -69,92 +69,27 @@
 
     </b-card>
 
-    <!-- Tabs Night Mode-->
-    <b-card no-body bg-variant="secondary" text-variant="white" v-show="nightModeBool == true">
-
-      <b-tabs card justified>
-
-        <!-- Controls Tab -->
-        <b-tab title="Controls" title-link-class="bg-secondary" no-body>
-
-          <ul style="text-align: left;">
-
-            <li>Left click to reveal a cell</li>
-            <li>Right click to place a flag to mark a mine</li>
-            <li>Middle click a number to reveal its adjacent squares</li>
-            <li>Classic Minesweeper controls: the goal is to uncover all cells in the grid that do not contain mines</li>
-
-          </ul>
-
-        </b-tab>
-
-        <!-- Display Tab -->
-        <b-tab title="Display" active title-link-class="bg-secondary" align="center">
-
-          <div>
-
-            <!-- Night Mode Checkbox -->
-            <b-checkbox v-model="nightMode" style="text-align: left;">&nbsp;Night Mode</b-checkbox>
-
-            <!-- Zoom Level -->
-            <b-form-group style="text-align: left; margin-top: 5px;">
-              <b-form-radio v-model="zoomLevel" value="1">&nbsp;50% Zoom</b-form-radio>
-              <b-form-radio v-model="zoomLevel" value="2">&nbsp;75% Zoom</b-form-radio>
-              <b-form-radio v-model="zoomLevel" value="3">&nbsp;100% Zoom</b-form-radio>
-              <b-form-radio v-model="zoomLevel" value="4">&nbsp;150% Zoom</b-form-radio>
-              <b-form-radio v-model="zoomLevel" value="5">&nbsp;200% Zoom</b-form-radio>
-            </b-form-group>
-
-          </div>
-
-        </b-tab>
-
-        <!-- Statistics Tab -->
-        <b-tab title="Statistics" title-link-class="bg-secondary" align="center">
-          <div style="width: 400px;">
-            <!-- Beginner Statistics -->
-            <div class="d-flex flex-row" style="justify-content: space-between;"><span>Beginner Games Won:</span><span>{{ beginnerGamesWon }}</span></div>
-            <div class="d-flex flex-row" style="justify-content: space-between;"><span>Beginner Games Played:</span><span>{{ beginnerGamesPlayed }}</span></div>
-            <div class="d-flex flex-row" style="justify-content: space-between;"><span>Beginner Win Percentage:</span><span>{{ beginnerAverage }}%</span></div>
-            <!-- Intermediate Statistics -->
-            <div class="d-flex flex-row" style="justify-content: space-between;"><span>Intermediate Games Won:</span><span>{{ intermediateGamesWon }}</span></div>
-            <div class="d-flex flex-row" style="justify-content: space-between;"><span>Intermediate Games Played:</span><span>{{ intermediateGamesPlayed }}</span></div>
-            <div class="d-flex flex-row" style="justify-content: space-between;"><span>Intermediate Win Percentage:</span><span>{{ intermediateAverage }}%</span></div>
-            <!-- Advanced Statistics -->
-            <div class="d-flex flex-row" style="justify-content: space-between;"><span>Advanced Games Won:</span><span>{{ advancedGamesWon }}</span></div>
-            <div class="d-flex flex-row" style="justify-content: space-between;"><span>Advanced Games Played:</span><span>{{ advancedGamesPlayed }}</span></div>
-            <div class="d-flex flex-row" style="justify-content: space-between;"><span>Advanced Win Percentage:</span><span>{{ advancedAverage }}%</span></div>
-          </div>
-        </b-tab>
-
-      </b-tabs>
-
-    </b-card>
-
-    <!-- High Scores Tabs Light Mode -->
-    <b-card title="High Scores" no-body v-show="nightModeBool == false" style="margin-top: 20px; margin-bottom: 20px;">
+    <!-- High Scores Tabs -->
+    <b-card no-body :bg-variant="nightModeBool ? 'secondary' : ''" style="margin-top: 20px; margin-bottom: 20px;">
 
       <b-tabs card justified>
 
         <!-- Beginner High Scores -->
-        <b-tab no-body title="Beginner">
-          <!-- previous page button -->
+        <b-tab no-body title="Beginner" :title-link-class="nightModeBool ? 'bg-secondary' : ''">
           <b-button
             :disabled="currentPageBeginner < 2"
             @click="currentPageBeginner--"
             style="margin: 4px;"
+            :variant="nightModeBool ? 'light' : 'secondary'"
             >Prev</b-button
           >
-
-          <!-- next page button -->
           <b-button
             :disabled="currentPageBeginner * perPage >= beginnerTimes.length"
             @click="currentPageBeginner++"
             style="margin: 4px;"
+            :variant="nightModeBool ? 'light' : 'secondary'"
             >Next</b-button
           >
-
-          <!-- table -->
           <b-table
             :items="beginnerTimes"
             :fields="fields"
@@ -167,24 +102,21 @@
         </b-tab>
 
         <!-- Intermediate High Scores -->
-        <b-tab no-body active title="Intermediate">
-          <!-- previous page button -->
+        <b-tab no-body active title="Intermediate" :title-link-class="nightModeBool ? 'bg-secondary' : ''">
           <b-button
             :disabled="currentPageIntermediate < 2"
             @click="currentPageIntermediate--"
             style="margin: 4px;"
+            :variant="nightModeBool ? 'light' : 'secondary'"
             >Prev</b-button
           >
-
-          <!-- next page button -->
           <b-button
             :disabled="currentPageIntermediate * perPage >= intermediateTimes.length"
             @click="currentPageIntermediate++"
             style="margin: 4px;"
+            :variant="nightModeBool ? 'light' : 'secondary'"
             >Next</b-button
           >
-
-          <!-- table -->
           <b-table
             :items="intermediateTimes"
             :fields="fields"
@@ -197,129 +129,21 @@
         </b-tab>
 
         <!-- Advanced High Scores -->
-        <b-tab no-body title="Advanced">
-          <!-- previous page button -->
+        <b-tab no-body title="Advanced" :title-link-class="nightModeBool ? 'bg-secondary' : ''">
           <b-button
             :disabled="currentPageAdvanced < 2"
             @click="currentPageAdvanced--"
             style="margin: 4px;"
+            :variant="nightModeBool ? 'light' : 'secondary'"
             >Prev</b-button
           >
-
-          <!-- next page button -->
           <b-button
             :disabled="currentPageAdvanced * perPage >= advancedTimes.length"
             @click="currentPageAdvanced++"
             style="margin: 4px;"
+            :variant="nightModeBool ? 'light' : 'secondary'"
             >Next</b-button
           >
-
-          <!-- table -->
-          <b-table
-            :items="advancedTimes"
-            :fields="fields"
-            small
-            fixed
-            responsive="sm"
-            :perPage="perPage"
-            :currentPage="currentPageAdvanced"
-          ></b-table>
-        </b-tab>
-
-      </b-tabs>
-
-    </b-card>
-
-    <!-- High Scores Tabs Night Mode -->
-    <b-card no-body bg-variant="secondary" v-show="nightModeBool == true" style="margin-top: 20px;">
-
-      <b-tabs card justified>
-
-        <!-- Beginner High Scores -->
-        <b-tab no-body title="Beginner" title-link-class="bg-secondary">
-          <!-- previous page button -->
-          <b-button
-            :disabled="currentPageBeginner < 2"
-            @click="currentPageBeginner--"
-            style="margin: 4px;"
-            variant="light"
-            >Prev</b-button
-          >
-
-          <!-- next page button -->
-          <b-button
-            :disabled="currentPageBeginner * perPage >= beginnerTimes.length"
-            @click="currentPageBeginner++"
-            style="margin: 4px;"
-            variant="light"
-            >Next</b-button
-          >
-
-          <!-- table -->
-          <b-table
-            :items="beginnerTimes"
-            :fields="fields"
-            small
-            fixed
-            responsive="sm"
-            :perPage="perPage"
-            :currentPage="currentPageBeginner"
-          ></b-table>
-        </b-tab>
-
-        <!-- Intermediate High Scores -->
-        <b-tab no-body active title="Intermediate" title-link-class="bg-secondary">
-          <!-- previous page button -->
-          <b-button
-            :disabled="currentPageIntermediate < 2"
-            @click="currentPageIntermediate--"
-            style="margin: 4px;"
-            variant="light"
-            >Prev</b-button
-          >
-
-          <!-- next page button -->
-          <b-button
-            :disabled="currentPageIntermediate * perPage >= intermediateTimes.length"
-            @click="currentPageIntermediate++"
-            style="margin: 4px;"
-            variant="light"
-            >Next</b-button
-          >
-
-          <!-- table -->
-          <b-table
-            :items="intermediateTimes"
-            :fields="fields"
-            small
-            fixed
-            responsive="sm"
-            :perPage="perPage"
-            :currentPage="currentPageIntermediate"
-          ></b-table>
-        </b-tab>
-
-        <!-- Advanced High Scores -->
-        <b-tab no-body title="Advanced" title-link-class="bg-secondary">
-          <!-- previous page button -->
-          <b-button
-            :disabled="currentPageAdvanced < 2"
-            @click="currentPageAdvanced--"
-            style="margin: 4px;"
-            variant="light"
-            >Prev</b-button
-          >
-
-          <!-- next page button -->
-          <b-button
-            :disabled="currentPageAdvanced * perPage >= advancedTimes.length"
-            @click="currentPageAdvanced++"
-            style="margin: 4px;"
-            variant="light"
-            >Next</b-button
-          >
-
-          <!-- table -->
           <b-table
             :items="advancedTimes"
             :fields="fields"
@@ -341,8 +165,7 @@
 
 <script>
 import LevelMenu from '../components/LevelMenu.vue'
-import { mapState, mapActions } from 'vuex'
-import store from '../store.js'
+import { mapState } from 'vuex'
 
 export default {
   components: {
@@ -363,11 +186,11 @@ export default {
   },
   async created() {
     document.body.style.zoom = "100%"
-    store.dispatch('restartGame')
-    store.dispatch('getUserStatistics').then(() => {
+    this.$store.dispatch('restartGame')
+    this.$store.dispatch('getUserStatistics').then(() => {
       this.calculateUserStatisticAverages()
     })
-    let i = store.dispatch('getScoresMongo')
+    let i = this.$store.dispatch('getScoresMongo')
     await i
     this.sortTimes()
   },
@@ -384,9 +207,6 @@ export default {
       intermediateAverage: 0,
       intermediateTimes: [],
       nightMode: false,
-      options: [
-        { item: 'Night Mode', name: 'Night Mode' }
-      ],
       perPage: 10,
       zoomLevel: 3,
     }
@@ -435,12 +255,6 @@ export default {
         this.advancedTimes[i].rank = i + 1
       }
     },
-    ...mapActions([
-      'getScoresMongo',
-      'restartGame',
-      'toggleNightMode',
-      'toggleZoom'
-    ])
   },
   mounted() {
     if (this.backgroundColor == '#e9e9e9') {
@@ -451,12 +265,12 @@ export default {
   },
   watch: {
     async nightMode() {
-      await store.dispatch('toggleNightMode', {
+      await this.$store.dispatch('toggleNightMode', {
         night_mode_bool: this.nightMode
       })
     },
     async zoomLevel() {
-      await store.dispatch('toggleZoom', {
+      await this.$store.dispatch('toggleZoom', {
         zoom_level: this.zoomLevel
       })
     }
@@ -465,26 +279,26 @@ export default {
 </script>
 
 <style>
-a {
+.home-page a {
   border: none !important;
 }
-a:hover {
+.home-page a:hover {
   border: none !important;
 }
-div.card-header {
+.home-page div.card-header {
   border: none !important;
   padding: none !important;
 }
-.nav-link {
+.home-page .nav-link {
   color: black !important;
 }
-.nav-link.active {
+.home-page .nav-link.active {
   color: #ffa500 !important;
 }
-.nav-link:hover {
-  border: none !important; 
+.home-page .nav-link:hover {
+  border: none !important;
 }
-.nav-link.active:hover {
+.home-page .nav-link.active:hover {
   border: none !important;
 }
 </style>

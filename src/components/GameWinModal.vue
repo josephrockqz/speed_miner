@@ -26,8 +26,7 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
-import store from '../store.js'
+import { mapState } from 'vuex'
 
 export default {
   computed: {
@@ -498,27 +497,20 @@ export default {
     checkNameFill() {
       if (this.name === '') {
         return true
-      } else if (this.profanityList.includes(this.name)) {
+      } else if (this.profanityList.some(word => this.name.toLowerCase().includes(word.toLowerCase()))) {
         return true
       }
       return false
     },
-    submitScore() {
-      // close modal
-      store.dispatch('closeGameWinModal')
-      // submit score to storage
-      store.dispatch('postScoreMongo', {
+    async submitScore() {
+      await this.$store.dispatch('postScoreMongo', {
         level: this.level,
         name: this.name,
         time: this.timeElapsed
-      }).then(() => {
-        this.name = ''
       })
+      this.name = ''
+      this.$store.dispatch('closeGameWinModal')
     },
-    ...mapActions([
-      'closeGameWinModal',
-      'restartGame'
-    ])
   }
 }
 

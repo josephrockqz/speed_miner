@@ -4,6 +4,24 @@ import EventServiceMongo from './services/EventServiceMongo'
 
 Vue.use(Vuex)
 
+function getNeighborIndices(cell_index, width, height) {
+  const maxIndex = height * width - 1
+  const neighbors = []
+  const notLeftEdge = cell_index % width != 0
+  const notRightEdge = cell_index % width != (width - 1)
+  const notTopEdge = cell_index - width >= 0
+  const notBottomEdge = cell_index + width <= maxIndex
+  if (notTopEdge) neighbors.push(cell_index - width)
+  if (notBottomEdge) neighbors.push(cell_index + width)
+  if (notLeftEdge) neighbors.push(cell_index - 1)
+  if (notRightEdge) neighbors.push(cell_index + 1)
+  if (notLeftEdge && notTopEdge) neighbors.push(cell_index - width - 1)
+  if (notRightEdge && notTopEdge) neighbors.push(cell_index - width + 1)
+  if (notLeftEdge && notBottomEdge) neighbors.push(cell_index + width - 1)
+  if (notRightEdge && notBottomEdge) neighbors.push(cell_index + width + 1)
+  return neighbors
+}
+
 export default new Vuex.Store({
   state: {
     advancedGamesPlayed: 0,
@@ -108,7 +126,7 @@ export default new Vuex.Store({
     INCREMENT_MINE_COUNTER(state) {
       state.numMinesLeft++
     },
-    INSTATIATE_RECTANGLE_LEVEL(state, dimensions) {
+    INSTANTIATE_RECTANGLE_LEVEL(state, dimensions) {
       state.height = dimensions.height
       state.level = dimensions.level
       state.numCells = dimensions.num_cells
@@ -128,7 +146,7 @@ export default new Vuex.Store({
     RESET_MINES(state) {
       state.mineIndices = new Set()
     },
-    RESET_TIME_ELPASED(state) {
+    RESET_TIME_ELAPSED(state) {
       state.timeElapsed = 0
     },
     SET_BEGINNER_STATISTICS(state, payload) {
@@ -301,76 +319,12 @@ export default new Vuex.Store({
       commit('OPEN_GAME_WIN_MODAL')
     },
     getNeighborMinesRectangle({ state }, { cell_index }) {
-      let numberOfNeighborMines = 0
-      // upper cell
-      if (cell_index - state.width >= 0 && state.mineIndices.has(cell_index - state.width)) {
-        numberOfNeighborMines++
-      }
-      // lower cell
-      if (cell_index + state.width <= (state.height * state.width - 1) && state.mineIndices.has(cell_index + state.width)) {
-        numberOfNeighborMines++
-      }
-      // left cell
-      if (cell_index % state.width != 0 && state.mineIndices.has(cell_index - 1)) {
-        numberOfNeighborMines++
-      }
-      // right cell
-      if (cell_index % state.width != (state.width - 1) && state.mineIndices.has(cell_index + 1)) {
-        numberOfNeighborMines++
-      }
-      // upper left cell
-      if (cell_index % state.width != 0 && cell_index - state.width >= 0 && state.mineIndices.has(cell_index - state.width - 1)) {
-        numberOfNeighborMines++
-      }
-      // upper right cell
-      if (cell_index % state.width != (state.width - 1) && cell_index - state.width >= 0 && state.mineIndices.has(cell_index - state.width + 1)) {
-        numberOfNeighborMines++
-      }
-      // lower left cell
-      if (cell_index % state.width != 0 && cell_index + state.width <= (state.height * state.width - 1) && state.mineIndices.has(cell_index + state.width - 1)) {
-        numberOfNeighborMines++
-      }
-      // lower right cell
-      if (cell_index % state.width != (state.width - 1) && cell_index + state.width <= (state.height * state.width - 1) && state.mineIndices.has(cell_index + state.width + 1)) {
-        numberOfNeighborMines++
-      }
-      return numberOfNeighborMines
+      const neighbors = getNeighborIndices(cell_index, state.width, state.height)
+      return neighbors.filter(i => state.mineIndices.has(i)).length
     },
     getNumberOfNeighborFlags({ state }, { cell_index }) {
-      let numberOfNeighborFlags = 0
-      // upper cell
-      if (cell_index - state.width >= 0 && state.squares[cell_index - state.width].classList.contains('flag')) {
-        numberOfNeighborFlags++
-      }
-      // lower cell
-      if (cell_index + state.width <= (state.height * state.width - 1) && state.squares[cell_index + state.width].classList.contains('flag')) {
-        numberOfNeighborFlags++
-      }
-      // left cell
-      if (cell_index % state.width != 0 && state.squares[cell_index - 1].classList.contains('flag')) {
-        numberOfNeighborFlags++
-      }
-      // right cell
-      if (cell_index % state.width != (state.width - 1) && state.squares[cell_index + 1].classList.contains('flag')) {
-        numberOfNeighborFlags++
-      }
-      // upper left cell
-      if (cell_index % state.width != 0 && cell_index - state.width >= 0 && state.squares[cell_index - state.width - 1].classList.contains('flag')) {
-        numberOfNeighborFlags++
-      }
-      // upper right cell
-      if (cell_index % state.width != (state.width - 1) && cell_index - state.width >= 0 && state.squares[cell_index - state.width + 1].classList.contains('flag')) {
-        numberOfNeighborFlags++
-      }
-      // lower left cell
-      if (cell_index % state.width != 0 && cell_index + state.width <= (state.height * state.width - 1) && state.squares[cell_index + state.width - 1].classList.contains('flag')) {
-        numberOfNeighborFlags++
-      }
-      // lower right cell
-      if (cell_index % state.width != (state.width - 1) && cell_index + state.width <= (state.height * state.width - 1) && state.squares[cell_index + state.width + 1].classList.contains('flag')) {
-        numberOfNeighborFlags++
-      }
-      return numberOfNeighborFlags
+      const neighbors = getNeighborIndices(cell_index, state.width, state.height)
+      return neighbors.filter(i => state.squares[i].classList.contains('flag')).length
     },
     getScoresMongo({ commit }) {
       return EventServiceMongo.getScores()
@@ -386,47 +340,19 @@ export default new Vuex.Store({
       commit('GET_SQUARES', squares)
     },
     getUserStatistics({ commit }) {
-      let games_so_far
-      let wins_so_far
-      games_so_far = localStorage.getItem("numBeginnerGames")
-      wins_so_far = localStorage.getItem("numBeginnerWins")
-      if (games_so_far == null) {
-        games_so_far = 0
-      }
-      if (wins_so_far == null) {
-        wins_so_far = 0
-      }
-      commit('SET_BEGINNER_STATISTICS', {
-        num_games: games_so_far,
-        num_wins: wins_so_far
-      })
-      games_so_far = localStorage.getItem("numIntermediateGames")
-      wins_so_far = localStorage.getItem("numIntermediateWins")
-      if (games_so_far == null) {
-        games_so_far = 0
-      }
-      if (wins_so_far == null) {
-        wins_so_far = 0
-      }
-      commit('SET_INTERMEDIATE_STATISTICS', {
-        num_games: games_so_far,
-        num_wins: wins_so_far
-      })
-      games_so_far = localStorage.getItem("numAdvancedGames")
-      wins_so_far = localStorage.getItem("numAdvancedWins")
-      if (games_so_far == null) {
-        games_so_far = 0
-      }
-      if (wins_so_far == null) {
-        wins_so_far = 0
-      }
-      commit('SET_ADVANCED_STATISTICS', {
-        num_games: games_so_far,
-        num_wins: wins_so_far
+      const levels = [
+        { gamesKey: 'numBeginnerGames', winsKey: 'numBeginnerWins', mutation: 'SET_BEGINNER_STATISTICS' },
+        { gamesKey: 'numIntermediateGames', winsKey: 'numIntermediateWins', mutation: 'SET_INTERMEDIATE_STATISTICS' },
+        { gamesKey: 'numAdvancedGames', winsKey: 'numAdvancedWins', mutation: 'SET_ADVANCED_STATISTICS' }
+      ]
+      levels.forEach(({ gamesKey, winsKey, mutation }) => {
+        const num_games = parseInt(localStorage.getItem(gamesKey), 10) || 0
+        const num_wins = parseInt(localStorage.getItem(winsKey), 10) || 0
+        commit(mutation, { num_games, num_wins })
       })
     },
     instantiateRectangleLevel({ commit }, { height, level, num_cells, num_mines, width }) {
-      commit('INSTATIATE_RECTANGLE_LEVEL', {
+      commit('INSTANTIATE_RECTANGLE_LEVEL', {
         height: height,
         level: level,
         num_cells: num_cells,
@@ -464,24 +390,7 @@ export default new Vuex.Store({
         return Math.floor(Math.random() * max)
       }
       // build exclusion zone: first-clicked cell + its 3x3 neighborhood
-      let excluded = new Set()
-      excluded.add(start_index)
-      // upper cell
-      if (start_index - state.width >= 0) excluded.add(start_index - state.width)
-      // lower cell
-      if (start_index + state.width <= (state.height * state.width - 1)) excluded.add(start_index + state.width)
-      // left cell
-      if (start_index % state.width != 0) excluded.add(start_index - 1)
-      // right cell
-      if (start_index % state.width != (state.width - 1)) excluded.add(start_index + 1)
-      // upper left cell
-      if (start_index % state.width != 0 && start_index - state.width >= 0) excluded.add(start_index - state.width - 1)
-      // upper right cell
-      if (start_index % state.width != (state.width - 1) && start_index - state.width >= 0) excluded.add(start_index - state.width + 1)
-      // lower left cell
-      if (start_index % state.width != 0 && start_index + state.width <= (state.height * state.width - 1)) excluded.add(start_index + state.width - 1)
-      // lower right cell
-      if (start_index % state.width != (state.width - 1) && start_index + state.width <= (state.height * state.width - 1)) excluded.add(start_index + state.width + 1)
+      let excluded = new Set([start_index, ...getNeighborIndices(start_index, state.width, state.height)])
 
       // place mines, avoiding the exclusion zone
       let i = 0
@@ -499,70 +408,29 @@ export default new Vuex.Store({
       })
     },
     recurseBlankCellsRectangle({ commit, dispatch, state }, { cell_index }) {
-      // first, uncover the cell if it needs to be
       if (!state.squares[cell_index].classList.contains('uncovered')) {
         commit('CELL_UNCOVER', cell_index)
       }
-
-      // upper cell
-      if (cell_index - state.width >= 0 && !state.mineIndices.has(cell_index - state.width)) {
-        dispatch('uncoverCell', {
-          cell_index: cell_index - state.width
-        })
-      }
-      // lower cell
-      if (cell_index + state.width <= (state.height * state.width - 1) && !state.mineIndices.has(cell_index + state.width)) {
-        dispatch('uncoverCell', {
-          cell_index: cell_index + state.width
-        })
-      }
-      // left cell
-      if (cell_index % state.width != 0 && !state.mineIndices.has(cell_index - 1)) {
-        dispatch('uncoverCell', {
-          cell_index: cell_index - 1
-        })
-      }
-      // right cell
-      if (cell_index % state.width != (state.width - 1) && !state.mineIndices.has(cell_index + 1)) {
-        dispatch('uncoverCell', {
-          cell_index: cell_index + 1
-        })
-      }
-      // upper left cell
-      if (cell_index % state.width != 0 && cell_index - state.width >= 0 && !state.mineIndices.has(cell_index - state.width - 1)) {
-        dispatch('uncoverCell', {
-          cell_index: cell_index - state.width - 1
-        })
-      }
-      // upper right cell
-      if (cell_index % state.width != (state.width - 1) && cell_index - state.width >= 0 && !state.mineIndices.has(cell_index - state.width + 1)) {
-        dispatch('uncoverCell', {
-          cell_index: cell_index - state.width + 1
-        })
-      }
-      // lower left cell
-      if (cell_index % state.width != 0 && cell_index + state.width <= (state.height * state.width - 1) && !state.mineIndices.has(cell_index + state.width - 1)) {
-        dispatch('uncoverCell', {
-          cell_index: cell_index + state.width - 1
-        })
-      }
-      // lower right cell
-      if (cell_index % state.width != (state.width - 1) && cell_index + state.width <= (state.height * state.width - 1) && !state.mineIndices.has(cell_index + state.width + 1)) {
-        dispatch('uncoverCell', {
-          cell_index: cell_index + state.width + 1
-        })
-      }
+      const neighbors = getNeighborIndices(cell_index, state.width, state.height)
+      neighbors.forEach(i => {
+        if (!state.mineIndices.has(i)) {
+          dispatch('uncoverCell', { cell_index: i })
+        }
+      })
     },
     restartGame({ commit, state }) {
       if (state.squaresBool == true) {
         commit('ENABLE_GRID')
         commit('END_TIMER')
         commit('RESET_MINES')
-        commit('RESET_TIME_ELPASED')
+        commit('RESET_TIME_ELAPSED')
         commit('RESET_MINE_COUNTER')
         for (let i = 0; i < state.numCells; i++) {
-          state.squares[i].removeAttribute('class')
+          state.squares[i].classList.remove('uncovered', 'mine', 'mine-death', 'flag', 'flag-misplaced')
           state.squares[i].innerText = ''
+          state.squares[i].style.color = ''
+          state.squares[i].style.lineHeight = ''
+          state.squares[i].style.fontSize = ''
         }
       }
     },
@@ -632,122 +500,33 @@ export default new Vuex.Store({
         return
       }
       let hitMine = false
-
-      // Helper to process each neighbor
-      function processNeighbor(neighborIndex) {
-        if (!state.mineIndices.has(neighborIndex)) {
-          dispatch('uncoverCell', {
-            cell_index: neighborIndex
-          })
-        }
-        else if (state.mineIndices.has(neighborIndex) && !state.squares[neighborIndex].classList.contains('flag')) {
-          commit('CELL_MINE_DEATH', neighborIndex)
+      const neighbors = getNeighborIndices(cell_index, state.width, state.height)
+      neighbors.forEach(i => {
+        if (!state.mineIndices.has(i)) {
+          dispatch('uncoverCell', { cell_index: i })
+        } else if (!state.squares[i].classList.contains('flag')) {
+          commit('CELL_MINE_DEATH', i)
           hitMine = true
         }
-      }
-
-      // upper cell
-      if (cell_index - state.width >= 0) {
-        processNeighbor(cell_index - state.width)
-      }
-      // lower cell
-      if (cell_index + state.width <= (state.height * state.width - 1)) {
-        processNeighbor(cell_index + state.width)
-      }
-      // left cell
-      if (cell_index % state.width != 0) {
-        processNeighbor(cell_index - 1)
-      }
-      // right cell
-      if (cell_index % state.width != (state.width - 1)) {
-        processNeighbor(cell_index + 1)
-      }
-      // upper left cell
-      if (cell_index % state.width != 0 && cell_index - state.width >= 0) {
-        processNeighbor(cell_index - state.width - 1)
-      }
-      // upper right cell
-      if (cell_index % state.width != (state.width - 1) && cell_index - state.width >= 0) {
-        processNeighbor(cell_index - state.width + 1)
-      }
-      // lower left cell
-      if (cell_index % state.width != 0 && cell_index + state.width <= (state.height * state.width - 1)) {
-        processNeighbor(cell_index + state.width - 1)
-      }
-      // lower right cell
-      if (cell_index % state.width != (state.width - 1) && cell_index + state.width <= (state.height * state.width - 1)) {
-        processNeighbor(cell_index + state.width + 1)
-      }
-
-      // Dispatch gameLoss only once if any mine was hit
+      })
       if (hitMine) {
-        dispatch('gameLoss', {
-          level: level
-        })
+        dispatch('gameLoss', { level: level })
       }
     },
-    updateUserStatistics({ commit }, { game_won_bool, level}) {
-      // update user statistics using local storage
-      let games_so_far
-      let wins_so_far
-      if (level == 1) {
-        games_so_far = localStorage.getItem("numBeginnerGames")
-        wins_so_far = localStorage.getItem("numBeginnerWins")
-        if (games_so_far == null) {
-          games_so_far = 0
-        }
-        if (wins_so_far == null) {
-          wins_so_far = 0
-        }
-        games_so_far++
-        if (game_won_bool == true) {
-          wins_so_far++
-        }
-        localStorage.setItem('numBeginnerGames', games_so_far)
-        localStorage.setItem('numBeginnerWins', wins_so_far)
-        commit('SET_BEGINNER_STATISTICS', {
-          num_games: games_so_far,
-          num_wins: wins_so_far
-        })
-      } else if (level == 2) {
-        games_so_far = localStorage.getItem("numIntermediateGames")
-        wins_so_far = localStorage.getItem("numIntermediateWins")
-        if (games_so_far == null) {
-          games_so_far = 0
-        }
-        if (wins_so_far == null) {
-          wins_so_far = 0
-        }
-        games_so_far++
-        if (game_won_bool == true) {
-          wins_so_far++
-        }
-        localStorage.setItem('numIntermediateGames', games_so_far)
-        localStorage.setItem('numIntermediateWins', wins_so_far)
-        commit('SET_INTERMEDIATE_STATISTICS', {
-          num_games: games_so_far,
-          num_wins: wins_so_far
-        })
-      } else if (level == 3) {
-        games_so_far = localStorage.getItem("numAdvancedGames")
-        wins_so_far = localStorage.getItem("numAdvancedWins")
-        if (games_so_far == null) {
-          games_so_far = 0
-        }
-        if (wins_so_far == null) {
-          wins_so_far = 0
-        }
-        games_so_far++
-        if (game_won_bool == true) {
-          wins_so_far++
-        }
-        localStorage.setItem('numAdvancedGames', games_so_far)
-        localStorage.setItem('numAdvancedWins', wins_so_far)
-        commit('SET_ADVANCED_STATISTICS', {
-          num_games: games_so_far,
-          num_wins: wins_so_far
-        })
+    updateUserStatistics({ commit }, { game_won_bool, level }) {
+      const levelConfig = {
+        1: { gamesKey: 'numBeginnerGames', winsKey: 'numBeginnerWins', mutation: 'SET_BEGINNER_STATISTICS' },
+        2: { gamesKey: 'numIntermediateGames', winsKey: 'numIntermediateWins', mutation: 'SET_INTERMEDIATE_STATISTICS' },
+        3: { gamesKey: 'numAdvancedGames', winsKey: 'numAdvancedWins', mutation: 'SET_ADVANCED_STATISTICS' }
       }
+      const config = levelConfig[level]
+      if (!config) return
+      let num_games = (parseInt(localStorage.getItem(config.gamesKey), 10) || 0) + 1
+      let num_wins = parseInt(localStorage.getItem(config.winsKey), 10) || 0
+      if (game_won_bool) num_wins++
+      localStorage.setItem(config.gamesKey, num_games)
+      localStorage.setItem(config.winsKey, num_wins)
+      commit(config.mutation, { num_games, num_wins })
     }
   },
   modules: {}

@@ -18,8 +18,7 @@
 <script>
 import GameWinModal from './components/GameWinModal.vue'
 import GameLossModal from './components/GameLossModal.vue'
-import { mapState, mapActions } from 'vuex'
-import store from './store.js'
+import { mapState } from 'vuex'
 
 export default {
   name: 'App',
@@ -40,12 +39,9 @@ export default {
         this.$bvModal.show('leave-level-modal')
       } else if (this.$route.name != 'Home') {
         this.$router.push('/')
-        store.dispatch('restartGame')
+        this.$store.dispatch('restartGame')
       }
-    },
-    ...mapActions([
-      'restartGame'
-    ])
+    }
   },
   mounted() {
     document.body.style.backgroundColor = this.backgroundColor

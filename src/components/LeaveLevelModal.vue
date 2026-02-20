@@ -17,20 +17,14 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
-import store from '../store.js'
-
 export default {
   methods: {
-    ...mapActions([
-      'restartGame'
-    ]),
     cancel() {
       this.$bvModal.hide('leave-level-modal')
     },
     async leaveLevel() {
       this.$router.push('/')
-      await store.dispatch('restartGame')
+      await this.$store.dispatch('restartGame')
     }
   }
 }

@@ -6,16 +6,14 @@
 
       <!-- Number of Mines Left -->
       <div style="height: 50px; margin: 2.5px; vertical-align: middle; background-color: black; color: red; width: 60px; text-align: center">
-        <h2 v-if="numMinesLeft >= 100">{{ numMinesLeft }}</h2>
-        <h2 v-else-if="numMinesLeft >= 10">0{{ numMinesLeft }}</h2>
-        <h2 v-else-if="numMinesLeft >= 0">00{{ numMinesLeft }}</h2>
-        <h2 v-else>-{{ String(Math.abs(numMinesLeft)).padStart(2, '0') }}</h2>
+        <h2>{{ mineCounterDisplay }}</h2>
       </div>
 
       <!-- Restart Game Button -->
       <b-button @click="$store.dispatch('restartGame')"
                 squared
                 style="height: 50px; margin-top: 2.5px;"
+                aria-label="Restart game"
       ><font-awesome-icon icon="redo" />
       </b-button>
 
@@ -28,6 +26,7 @@
       <b-button @click="openModal"
                 squared
                 style="height: 50px; margin-top: 2.5px;"
+                aria-label="Go to home"
       ><font-awesome-icon icon="home" />
       </b-button>
 
@@ -48,8 +47,7 @@
 
 <script>
 import LeaveLevelModal from './LeaveLevelModal.vue'
-import { mapState, mapActions } from 'vuex'
-import store from '../store.js'
+import { mapState } from 'vuex'
 
 export default {
   components: {
@@ -61,7 +59,13 @@ export default {
       numMinesLeft: 'numMinesLeft',
       squaresBool: 'squaresBool',
       timeElapsed: 'timeElapsed'
-    })
+    }),
+    mineCounterDisplay() {
+      if (this.numMinesLeft < 0) {
+        return '-' + String(Math.abs(this.numMinesLeft)).padStart(2, '0')
+      }
+      return String(this.numMinesLeft).padStart(3, '0')
+    }
   },
   methods: {
     openModal() {
@@ -71,19 +75,15 @@ export default {
         this.$bvModal.show('leave-level-modal')
       } else {
         this.$router.push('/')
-        store.dispatch('restartGame')
+        this.$store.dispatch('restartGame')
       }
     },
-    ...mapActions([
-      'restartGame',
-      'timeExceeded'
-    ])
   },
   props: ['level'],
   watch: {
     timeElapsed() {
       if (this.timeElapsed > 999) {
-        store.dispatch('timeExceeded', {
+        this.$store.dispatch('timeExceeded', {
           level: this.level
         })
       }
@@ -102,10 +102,7 @@ export default {
   margin-bottom: 10px;
   border: black 3px solid;
 }
-</style>
-
-<style>
-h2 {
+.game-panel h2 {
   margin-top: 6px !important;
   margin-bottom: 0px !important;
 }

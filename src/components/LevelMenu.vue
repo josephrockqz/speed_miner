@@ -2,16 +2,13 @@
 
   <div id="nav" style="margin-top:15px; margin-bottom: 100px;">
     
-    <div style="font-size: 32px;" v-show="nightModeBool == false">CHOOSE A LEVEL</div>
-    <div v-show="nightModeBool == false">(hover over levels to see specifications)</div>
-
-    <div style="font-size: 32px; color: black;" v-show="nightModeBool == true">CHOOSE A LEVEL</div>
-    <div style="color: black;" v-show="nightModeBool == true">(hover over levels to see specifications)</div>
+    <div style="font-size: 32px;" :style="{ color: nightModeBool ? 'black' : '' }">CHOOSE A LEVEL</div>
+    <div :style="{ color: nightModeBool ? 'black' : '' }">(hover over levels to see specifications)</div>
 
     <b-button v-for="level in levels"
               :key="level"
               :id="'popover-target-' + level"
-              @click="$router.push('/level' + level)"
+              @click="$router.push('/level/' + level)"
               style="margin: 40px;"
               size="lg"
               variant="secondary">{{ level }}</b-button>
@@ -48,7 +45,7 @@
       triggers="hover"
       placement="bottom"
       variant="danger"
-      title="Expert"
+      title="Advanced"
     >
       <div class="d-flex flex-row" style="justify-content: space-between;"><span>Height:</span><span>16</span></div>
       <div class="d-flex flex-row" style="justify-content: space-between;"><span>Width:</span><span>30</span></div>
