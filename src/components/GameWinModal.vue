@@ -17,7 +17,7 @@
         maxLength="24"
         v-model="name"
       />
-      <button :disabled="checkNameFill()" @click.prevent="submitScore()">
+      <button :disabled="checkNameFill() || submitting" @click.prevent="submitScore()">
         Submit
       </button>
     </div>
@@ -39,6 +39,7 @@ export default {
   data() {
     return {
       name: '',
+      submitting: false,
       profanityList: [
         `5h1t`,
         `5hit`,
@@ -495,19 +496,30 @@ export default {
   },
   methods: {
     checkNameFill() {
-      if (this.name === '') {
+      const trimmed = this.name.trim()
+      if (trimmed === '' || trimmed.length > 24) {
         return true
-      } else if (this.profanityList.some(word => this.name.toLowerCase().includes(word.toLowerCase()))) {
+      }
+      if (!/^[a-zA-Z0-9 _-]+$/.test(trimmed)) {
+        return true
+      }
+      if (this.profanityList.some(word => trimmed.toLowerCase().includes(word.toLowerCase()))) {
         return true
       }
       return false
     },
     async submitScore() {
-      await this.$store.dispatch('postScoreMongo', {
-        level: this.level,
-        name: this.name,
-        time: this.timeElapsed
-      })
+      this.submitting = true
+      const trimmed = this.name.trim()
+      try {
+        await this.$store.dispatch('postScoreMongo', {
+          level: this.level,
+          name: trimmed,
+          time: this.timeElapsed
+        })
+      } finally {
+        this.submitting = false
+      }
       this.name = ''
       this.$store.dispatch('closeGameWinModal')
     },

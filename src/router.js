@@ -27,4 +27,12 @@ const router = new VueRouter({
   mode: 'history'
 })
 
+router.beforeEach((to, from, next) => {
+  if (to.name === 'Level' && ![1, 2, 3].includes(parseInt(to.params.level, 10))) {
+    next('/')
+  } else {
+    next()
+  }
+})
+
 export default router
