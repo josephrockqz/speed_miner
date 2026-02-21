@@ -24,4 +24,5 @@ pnpm-debug.log*
 *.sw?
 
 # Claude Code
-.claude/
+.claude/*
+!.claude/skills/
