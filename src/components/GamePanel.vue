@@ -30,6 +30,14 @@
       ><font-awesome-icon icon="home" />
       </b-button>
 
+      <!-- Mute/Unmute Button -->
+      <b-button @click="toggleMute"
+                squared
+                style="height: 50px; margin-top: 2.5px;"
+                :aria-label="isMuted ? 'Unmute sounds' : 'Mute sounds'"
+      ><font-awesome-icon :icon="isMuted ? 'volume-mute' : 'volume-up'" />
+      </b-button>
+
       <!-- Time Elapsed -->
       <div style="height: 50px; margin: 2.5px; vertical-align: middle; background-color: black; color: red; width: 60px; text-align: center">
         <h2 v-if="timeElapsed < 10">00{{ timeElapsed }}</h2>
@@ -48,10 +56,16 @@
 <script>
 import LeaveLevelModal from './LeaveLevelModal.vue'
 import { mapState } from 'vuex'
+import { isMuted, setMuted } from '../services/SoundService'
 
 export default {
   components: {
     LeaveLevelModal
+  },
+  data() {
+    return {
+      isMuted: isMuted()
+    }
   },
   computed: {
     ...mapState({
@@ -68,6 +82,10 @@ export default {
     }
   },
   methods: {
+    toggleMute() {
+      this.isMuted = !this.isMuted
+      setMuted(this.isMuted)
+    },
     openModal() {
       // if level has been started, show modal confirming to leave
       // if game has not been started or has been finished, go to home page

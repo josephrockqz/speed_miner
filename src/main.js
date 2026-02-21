@@ -8,6 +8,8 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faHome } from '@fortawesome/free-solid-svg-icons'
 import { faRedo } from '@fortawesome/free-solid-svg-icons'
+import { faVolumeUp } from '@fortawesome/free-solid-svg-icons'
+import { faVolumeMute } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 Vue.use(BootstrapVue)
@@ -16,6 +18,8 @@ Vue.config.productionTip = false
 
 library.add(faHome)
 library.add(faRedo)
+library.add(faVolumeUp)
+library.add(faVolumeMute)
 
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 

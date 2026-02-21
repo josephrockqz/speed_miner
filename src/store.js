@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import EventServiceMongo from './services/EventServiceMongo'
+import { playReveal, playFlag, playUnflag, playExplosion, playWin } from './services/SoundService'
 
 Vue.use(Vuex)
 
@@ -301,6 +302,7 @@ export function createStoreConfig() {
       commit('CLOSE_GAME_WIN_MODAL')
     },
     async gameLoss({ commit, dispatch }, { level }) {
+      playExplosion()
       commit('END_TIMER')
       commit('DISABLE_GRID')
       commit('SWITCH_GAME_START_BOOL_OFF')
@@ -312,6 +314,7 @@ export function createStoreConfig() {
       commit('OPEN_GAME_LOSS_MODAL')
     },
     async gameWin({ commit, dispatch }, { level }) {
+      playWin()
       commit('END_TIMER')
       commit('DISABLE_GRID')
       commit('SWITCH_GAME_START_BOOL_OFF')
@@ -381,11 +384,13 @@ export function createStoreConfig() {
       if (!state.squares[cell_index].classList.contains('flag')) {
         commit('FLAG_ADD', cell_index)
         commit('DECREMENT_MINE_COUNTER')
+        playFlag()
       }
       // remove flag if one is already there
       else {
         commit('FLAG_REMOVE', cell_index)
         commit('INCREMENT_MINE_COUNTER')
+        playUnflag()
       }
     },
     placeMines({ commit, state }, { start_index }) {
@@ -419,7 +424,7 @@ export function createStoreConfig() {
       const neighbors = getNeighborIndices(cell_index, state.width, state.height)
       neighbors.forEach(i => {
         if (!state.mineIndices.has(i)) {
-          dispatch('uncoverCell', { cell_index: i })
+          dispatch('uncoverCell', { cell_index: i, silent: true })
         }
       })
     },
@@ -475,11 +480,12 @@ export function createStoreConfig() {
     toggleZoom({ commit }, { zoom_level }) {
       commit('TOGGLE_ZOOM', zoom_level)
     },
-    uncoverCell({ commit, dispatch, state }, { cell_index }) {
+    uncoverCell({ commit, dispatch, state }, { cell_index, silent }) {
       if (state.squares[cell_index].classList.contains('uncovered') || state.squares[cell_index].classList.contains('flag') || state.squares[cell_index].classList.contains('mine')) {
         return
       }
       commit('CELL_UNCOVER', cell_index) // uncover cell
+      if (!silent) playReveal()
       // get number of nearby mines
       dispatch('getNeighborMinesRectangle', {
         cell_index: cell_index
