@@ -10,20 +10,17 @@
     </span>
     <router-view />
     <GameWinModal/>
-    <GameLossModal/>
   </div>
 
 </template>
 
 <script>
 import GameWinModal from './components/GameWinModal.vue'
-import GameLossModal from './components/GameLossModal.vue'
 import { mapState } from 'vuex'
 
 export default {
   name: 'App',
   components: {
-    GameLossModal,
     GameWinModal
   },
   computed: {

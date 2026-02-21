@@ -5,6 +5,8 @@
     <!--Game Panel-->
     <GamePanel :level="1"/>
 
+    <GameLossModal/>
+
     <div class="level1">
 
       <!--Game Grid-->
@@ -24,12 +26,14 @@
 
 <script>
 import GamePanel from '../components/GamePanel.vue'
+import GameLossModal from '../components/GameLossModal.vue'
 import { mapState, mapActions } from 'vuex'
 import store from '../store.js'
 
 export default {
   components: {
-    GamePanel
+    GamePanel,
+    GameLossModal
   },
   computed: {
     ...mapState({
