@@ -10,6 +10,8 @@ import { faHome } from '@fortawesome/free-solid-svg-icons'
 import { faRedo } from '@fortawesome/free-solid-svg-icons'
 import { faVolumeUp } from '@fortawesome/free-solid-svg-icons'
 import { faVolumeMute } from '@fortawesome/free-solid-svg-icons'
+import { faFlag } from '@fortawesome/free-solid-svg-icons'
+import { faHandPointer } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 Vue.use(BootstrapVue)
@@ -20,8 +22,12 @@ library.add(faHome)
 library.add(faRedo)
 library.add(faVolumeUp)
 library.add(faVolumeMute)
+library.add(faFlag)
+library.add(faHandPointer)
 
 Vue.component('font-awesome-icon', FontAwesomeIcon)
+
+store.dispatch('initFlagMode')
 
 new Vue({
   router,

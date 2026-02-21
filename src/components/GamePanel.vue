@@ -17,17 +17,26 @@
       ><font-awesome-icon icon="redo" />
       </b-button>
 
-      <!-- Current Level Display -->
-      <div style="height: 50px; margin-top: 2.5px; vertical-align: middle; color: black; width: 40px; text-align: center">
-        <h2>L{{ level }}</h2>
-      </div>
-
       <!-- Home Button -->
       <b-button @click="openModal"
                 squared
                 style="height: 50px; margin-top: 2.5px;"
                 aria-label="Go to home"
       ><font-awesome-icon icon="home" />
+      </b-button>
+
+      <!-- Current Level Display -->
+      <div style="height: 50px; margin-top: 2.5px; vertical-align: middle; color: black; width: 40px; text-align: center">
+        <h2>L{{ level }}</h2>
+      </div>
+
+      <!-- Flag Mode Toggle Button -->
+      <b-button @click="$store.dispatch('toggleFlagMode')"
+                squared
+                style="height: 50px; margin-top: 2.5px;"
+                :variant="flagModeBool ? 'warning' : 'secondary'"
+                :aria-label="flagModeBool ? 'Switch to reveal mode' : 'Switch to flag mode'"
+      ><font-awesome-icon :icon="flagModeBool ? 'flag' : 'hand-pointer'" />
       </b-button>
 
       <!-- Mute/Unmute Button -->
@@ -69,6 +78,7 @@ export default {
   },
   computed: {
     ...mapState({
+      flagModeBool: 'flagModeBool',
       gameStartBool: 'gameStartBool',
       numMinesLeft: 'numMinesLeft',
       squaresBool: 'squaresBool',

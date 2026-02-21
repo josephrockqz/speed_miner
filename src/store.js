@@ -37,6 +37,7 @@ export function createStoreConfig() {
     beginnerGamesWon: 0,
     cells: [],
     disableGridBool: false,
+    flagModeBool: false,
     gameLossModalBool: false,
     gameStartBool: false,
     gameWinModalBool: false,
@@ -123,6 +124,13 @@ export function createStoreConfig() {
     },
     END_TIMER(state) {
       clearInterval(state.timer)
+    },
+    TOGGLE_FLAG_MODE(state) {
+      state.flagModeBool = !state.flagModeBool
+      localStorage.setItem('flagMode', state.flagModeBool)
+    },
+    SET_FLAG_MODE(state, value) {
+      state.flagModeBool = value
     },
     FLAG_ADD(state, cell_index) {
       if (!isValidIndex(cell_index, state)) return
@@ -218,6 +226,37 @@ export function createStoreConfig() {
     }
   },
   actions: {
+    async handleCellClick({ dispatch, state }, { cell_index, level }) {
+      if (state.flagModeBool) {
+        if (state.squaresBool && state.squares[cell_index] && state.squares[cell_index].classList.contains('uncovered')) {
+          dispatch('checkMiddleClick', { cell_index, level })
+        } else {
+          if (!state.squaresBool) {
+            await dispatch('getSquares')
+            await dispatch('startGame')
+          }
+          dispatch('placeFlag', { cell_index })
+        }
+      } else {
+        dispatch('checkCell', { cell_index, level })
+      }
+    },
+    handleCellRightClick({ dispatch, state }, { cell_index, level }) {
+      if (state.flagModeBool) {
+        dispatch('checkCell', { cell_index, level })
+      } else {
+        dispatch('placeFlag', { cell_index })
+      }
+    },
+    initFlagMode({ commit }) {
+      const stored = localStorage.getItem('flagMode')
+      if (stored === 'true') {
+        commit('SET_FLAG_MODE', true)
+      }
+    },
+    toggleFlagMode({ commit }) {
+      commit('TOGGLE_FLAG_MODE')
+    },
     async checkCell({ commit, dispatch, state }, { cell_index, level }) {
       if (state.disableGridBool == true) {
         return

@@ -10,8 +10,8 @@
       <!--Game Grid-->
       <div v-for="cell in cells"
            :key="cell"
-           @click="$store.dispatch('checkCell', {cell_index: cell, level: level})"
-           @click.right.prevent="$store.dispatch('placeFlag', {cell_index: cell})"
+           @click="$store.dispatch('handleCellClick', {cell_index: cell, level: level})"
+           @click.right.prevent="$store.dispatch('handleCellRightClick', {cell_index: cell, level: level})"
            @click.middle="$store.dispatch('checkMiddleClick', {cell_index: cell, level: level})"
       >
       </div>
